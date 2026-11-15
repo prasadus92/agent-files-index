@@ -12,6 +12,7 @@ import base64
 import html
 import io
 import json
+import math
 import sys
 from dataclasses import dataclass, field
 from functools import cache
@@ -27,6 +28,8 @@ SITE_FAMILY = "'Instrument Sans Variable','Instrument Sans',system-ui,sans-serif
 REPO_URL = "github.com/prasadus92/agent-files-index"
 
 WIDTH, PAD, PNG_ZOOM = 720, 32, 2
+# Wrapped text stops short of the edge: the site may fall back to a wider font than the one measured.
+TEXT_SLACK = 16
 BAR_H, ROW_H = 16, 32
 PAIR_BAR_H, PAIR_GAP, PAIR_ROW_H = 12, 2, 40
 RADIUS = 4
@@ -109,7 +112,7 @@ class Drawing:
 
 @cache
 def font(weight: int) -> TTFont:
-    return TTFont(FONT_FILES[weight])
+    return TTFont(FONT_FILES[weight], recalcTimestamp=False)
 
 
 def text_width(text: str, role: str) -> float:
@@ -121,16 +124,28 @@ def text_width(text: str, role: str) -> float:
 
 
 def wrap(text: str, role: str, width: float) -> list[str]:
-    """Greedy wrap, then narrowed while the line count holds, so the last line is never a lone word."""
+    """Greedy wrap, narrowed while the last line is under 55% of the first and the line count holds, so no line is a stub."""
     lines = greedy_wrap(text, role, width)
-    while len(lines) > 1 and len(narrower := greedy_wrap(text, role, width - 8)) == len(lines):
+    floor = max((text_width(w, role) for w in text.split()), default=0)
+    while (len(lines) > 1 and text_width(lines[-1], role) < 0.55 * text_width(lines[0], role) and width - 8 >= floor
+           and len(narrower := greedy_wrap(text, role, width - 8)) == len(lines)):
         lines, width = narrower, width - 8
     return lines
 
 
+def split_word(word: str, role: str, width: float) -> list[str]:
+    parts, part = [], ""
+    for c in word:
+        if part and text_width(part + c, role) > width:
+            parts.append(part)
+            part = ""
+        part += c
+    return parts + [part]
+
+
 def greedy_wrap(text: str, role: str, width: float) -> list[str]:
     lines, line = [], ""
-    for word in text.split():
+    for word in (piece for w in text.split() for piece in split_word(w, role, width)):
         candidate = f"{line} {word}".strip()
         if line and text_width(candidate, role) > width:
             lines.append(line)
@@ -157,7 +172,7 @@ def layout(chart: Chart, label_w: float, with_source: bool) -> Drawing:
         nonlocal y
         _, size, lead = TEXT[role]
         y += gap
-        for i, line in enumerate(wrap(text, role, WIDTH)):
+        for i, line in enumerate(wrap(text, role, WIDTH - TEXT_SLACK)):
             y += size if i == 0 else lead
             d.shapes.append(Text(0, y, line, role))
 
@@ -235,7 +250,7 @@ def embedded_fonts(d: Drawing) -> str:
         options = subset.Options()
         options.layout_features = ["kern", "liga"]
         sub = subset.Subsetter(options)
-        tt = TTFont(path)
+        tt = TTFont(path, recalcTimestamp=False)
         sub.populate(text=used)
         sub.subset(tt)
         buf = io.BytesIO()
@@ -290,16 +305,26 @@ LINK_LABELS = {"import": "Imports it with @AGENTS.md", "symlink": "Is a symlink 
                "none": "Never refers to it", "symlink_other": "Is a symlink to another file"}
 
 
+RARE_FILES = {"has_copilot": "Copilot", "has_cursor": "Cursor", "has_mcp_json": "MCP", "has_gemini_md": "Gemini"}
+
+
+def series_names(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
+
+
 def stars_label(key: str) -> str:
     lo, hi = key.split("-")
     return f"{int(lo):,}+ stars" if hi == "max" else f"{int(lo):,} to {int(hi):,} stars"
 
 
-def section_rows(sections: dict[str, float], limit: int = 12) -> list[Row]:
-    """Top categories by share, always including security, since the finding is how rare it is."""
+def section_rows(sections: dict[str, float], limit: int = 12) -> tuple[list[Row], str]:
+    """Top categories by share, always including security, since the finding is how rare it is; also says which were kept."""
     ranked = sorted(sections.items(), key=lambda kv: -kv[1])
-    shown = ranked[:limit] if any(k == "security" for k, _ in ranked[:limit]) else ranked[:limit - 1] + [("security", sections["security"])]
-    return [Row(SECTION_LABELS.get(k, k).capitalize(), (v,), highlight=k == "security") for k, v in shown]
+    if any(k == "security" for k, _ in ranked[:limit]):
+        shown, scope = ranked[:limit], f"the top {limit} of {len(ranked)} categories"
+    else:
+        shown, scope = ranked[:limit - 1] + [("security", sections["security"])], f"the top {limit - 1} of {len(ranked)} categories plus security"
+    return [Row(SECTION_LABELS.get(k, k).capitalize(), (v,), highlight=k == "security") for k, v in shown], scope
 
 
 def charts(s: dict) -> list[Chart]:
@@ -308,27 +333,29 @@ def charts(s: dict) -> list[Chart]:
     source = f"Source: Agent Files Index, snapshot {fr['snapshot']}, {REPO_URL}. Data CC BY 4.0."
     census = f"Census of {a:,} GitHub repos with 1,000+ stars."
     stars = list(ad["by_stars_A"].items())
-    top_band = stars[-1][1]["has_either"]
+    top_key, top_band = stars[-1][0], stars[-1][1]["has_either"]
     files = sorted((("has_agents_md", "AGENTS.md"), ("has_claude_any", "CLAUDE.md"), ("has_skills", "SKILL.md (skills folder)"),
                     ("has_copilot", "Copilot instructions"), ("has_cursor", "Cursor rules"), ("has_gemini_md", "GEMINI.md"),
                     ("has_mcp_json", ".mcp.json")), key=lambda kv: -ad["A"][kv[0]])
     link = sorted(both["link_share"].items(), key=lambda kv: -kv[1])
     cmd = (("has_any_command", "Any command"), ("has_test_cmd", "A test command"), ("has_lint_cmd", "A lint command"))
     sec = {kind: fa[kind]["sections"]["security"] for kind in ("agents_md", "claude_md")}
+    sec_rows = {kind: section_rows(fa[kind]["sections"]) for kind in ("agents_md", "claude_md")}
+    rare = [(name, ad["A"][k]) for k, name in RARE_FILES.items() if ad["A"][k] < 5]
     return [
-        Chart("adoption-by-stars", f"The more stars a repo has, the likelier it ships an agent file: {percent(top_band)} at 50,000+",
-              f"Repos with a root AGENTS.md or CLAUDE.md, by star count. {census}",
+        Chart("adoption-by-stars", f"The more stars, the likelier a repo has an AGENTS.md or CLAUDE.md: {percent(top_band)} at {stars_label(top_key).removesuffix(' stars')}",
+              f"Repos with a root AGENTS.md or CLAUDE.md, by stars. {census}",
               [Row(stars_label(k), (v["has_either"],), f"of {v['n']:,}", highlight=k.endswith("max")) for k, v in stars], source),
-        Chart("adoption-by-file", "AGENTS.md is the common format; tool-specific files trail far behind",
+        Chart("adoption-by-file", f"AGENTS.md leads; {series_names([n for n, _ in rare])} files each reach under {math.ceil(max(v for _, v in rare))}% of repos",
               f"Repos shipping each file. {a:,} repos with 1,000+ stars and a sample of {b:,} with 100 to 999.",
               [Row(label, (ad["A"][k], ad["B"][k])) for k, label in files], source, ("1,000+ stars", "100 to 999 stars")),
         Chart("sections-agents", f"Only {percent(sec['agents_md'])} of AGENTS.md files have a security section",
-              f"AGENTS.md files with a heading in each category, top 12 of 17. {census}",
-              section_rows(fa["agents_md"]["sections"]), source),
+              f"AGENTS.md files with a heading in each category, {sec_rows['agents_md'][1]}. {census}",
+              sec_rows["agents_md"][0], source),
         Chart("sections-claude", f"Only {percent(sec['claude_md'])} of CLAUDE.md files have a security section",
-              f"CLAUDE.md files with a heading in each category, top 12 of 17. {census}",
-              section_rows(fa["claude_md"]["sections"]), source),
-        Chart("commands", "CLAUDE.md files give the agent fewer exact commands than AGENTS.md",
+              f"CLAUDE.md files with a heading in each category, {sec_rows['claude_md'][1]}. {census}",
+              sec_rows["claude_md"][0], source),
+        Chart("commands", "Fewer CLAUDE.md files than AGENTS.md files give the agent a command to run",
               f"Files with each kind of command in a code block or inline code. {census}",
               [Row(label, (fa["claude_md"][k], fa["agents_md"][k])) for k, label in cmd], source, ("CLAUDE.md", "AGENTS.md")),
         Chart("both-files", f"In {percent(both['link_share']['none'])} of repos with both files, CLAUDE.md never points to AGENTS.md",

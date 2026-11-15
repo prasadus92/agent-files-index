@@ -7,13 +7,13 @@ try:
 except ImportError:
     charts = None
 
-SUMMARY = json.loads((Path(__file__).parent.parent / "data" / "summary.json").read_text())
+SUMMARY = Path(__file__).parent.parent / "data" / "summary.json"
 
 
-@unittest.skipUnless(charts, "chart layout needs fonttools")
+@unittest.skipUnless(charts and SUMMARY.exists(), "chart layout needs fonttools and data/summary.json")
 class ChartTests(unittest.TestCase):
     def setUp(self):
-        self.built = {c.slug: c for c in charts.charts(SUMMARY)}
+        self.built = {c.slug: c for c in charts.charts(json.loads(SUMMARY.read_text()))}
         self.label_w = charts.label_column(list(self.built.values()))
 
     def test_wrapped_text_never_ends_on_a_lone_word(self):
@@ -24,14 +24,21 @@ class ChartTests(unittest.TestCase):
 
     def test_security_always_shown_and_highlighted(self):
         sections = {f"cat{i}": 50.0 - i for i in range(16)} | {"security": 1.0}
-        rows = charts.section_rows(sections)
+        rows, scope = charts.section_rows(sections)
         self.assertEqual(len(rows), 12)
         self.assertEqual([r.label for r in rows if r.highlight], ["Security"])
+        self.assertEqual(scope, "the top 11 of 17 categories plus security")
+        self.assertEqual(charts.section_rows(sections | {"security": 49.5})[1], "the top 12 of 17 categories")
 
     def test_bars_sorted_by_value(self):
         for slug in ("adoption-by-file", "both-files", "sections-claude"):
             values = [r.values[0] for r in self.built[slug].rows if not r.highlight or slug != "sections-claude"]
             self.assertEqual(values, sorted(values, reverse=True), slug)
+
+    def test_wrap_ends_on_unbreakable_text(self):
+        for text in ("one two", "Source: " + "x" * 200, "a" * 120 + " b"):
+            lines = charts.wrap(text, "subtitle", 300)
+            self.assertTrue(all(charts.text_width(line, "subtitle") <= 300 for line in lines), text[:20])
 
     def test_text_stays_inside_the_canvas(self):
         for chart in self.built.values():
@@ -43,7 +50,7 @@ class ChartTests(unittest.TestCase):
     def test_every_chart_shares_the_label_column(self):
         for chart in self.built.values():
             d = charts.layout(chart, self.label_w, with_source=False)
-            starts = {round(s.x, 1) for s in d.shapes if isinstance(s, charts.Bar) and s.w != 10}
+            starts = {round(s.x, 1) for s in d.shapes if isinstance(s, charts.Bar) and s.h > 10}
             self.assertEqual(starts, {round(self.label_w, 1)}, chart.slug)
 
     def test_post_figure_has_no_blank_lines(self):

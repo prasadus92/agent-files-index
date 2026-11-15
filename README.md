@@ -164,4 +164,4 @@ See [`CITATION.cff`](CITATION.cff), or:
 
 Copyright Prasad Subrahmanya (https://prasad.tech).
 
-Code: MIT ([`LICENSE`](LICENSE)). Data in `data/`: CC BY 4.0 ([`data/LICENSE`](data/LICENSE)). The source files belong to their repos and keep their own licenses; this dataset does not redistribute them.
+Code: MIT ([`LICENSE`](LICENSE)). Data in `data/`: CC BY 4.0 ([`data/LICENSE`](data/LICENSE)). The chart font in `pipeline/fonts` is Instrument Sans under the SIL Open Font License 1.1 ([`OFL.txt`](pipeline/fonts/OFL.txt)). The source files belong to their repos and keep their own licenses; this dataset does not redistribute them.

@@ -11,7 +11,7 @@ python -m agentfiles lint . --min-severity warning
 uv sync --group data
 ```
 
-The first 3 need only Python 3.11+. `uv sync --group data` installs pandas, pyarrow and matplotlib for the pipeline.
+The first 3 need only Python 3.11+. `uv sync --group data` installs pandas, pyarrow, fonttools and resvg-py for the pipeline. Chart tests need fonttools and skip without it.
 
 ## Layout
 

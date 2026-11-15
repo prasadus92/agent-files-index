@@ -23,9 +23,27 @@ The census covers 38,272 public repos with 1,000 or more stars and a push in the
 - **Skills.** 29,352 `SKILL.md` files in 4,130 repos across both strata. 98.9% have frontmatter, and 3.5% have a `name` that breaks the spec or does not match its folder.
 - **Secrets.** The raw patterns matched 119 file and pattern pairs. After removing placeholders, local dev credentials and low-entropy values, 2 files remain. Each has an AWS-format access key ID with no secret key beside it.
 
-![Repos with an AGENTS.md or CLAUDE.md, by stars](charts/adoption-by-stars.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/adoption-by-stars-dark.png">
+  <img alt="Share of repos with an AGENTS.md or CLAUDE.md, rising with stars" src="charts/adoption-by-stars.png" width="784">
+</picture>
 
-![What CLAUDE.md does with AGENTS.md](charts/both-files.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/adoption-by-file-dark.png">
+  <img alt="Share of repos shipping each agent file, AGENTS.md first" src="charts/adoption-by-file.png" width="784">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/commands-dark.png">
+  <img alt="CLAUDE.md files give fewer commands than AGENTS.md files" src="charts/commands.png" width="784">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="charts/both-files-dark.png">
+  <img alt="What CLAUDE.md does with AGENTS.md in repos that have both" src="charts/both-files.png" width="784">
+</picture>
+
+The charts come from `summary.json` through `pipeline.charts`, as light and dark SVG and PNG in [`charts/`](charts).
 
 Every number is in [`data/summary.json`](data/summary.json).
 

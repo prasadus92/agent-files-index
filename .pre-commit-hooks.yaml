@@ -1,0 +1,7 @@
+- id: agentfiles
+  name: agentfiles lint
+  description: Lint AGENTS.md, CLAUDE.md and SKILL.md files.
+  entry: agentfiles lint
+  language: python
+  files: (^|/)(AGENTS|CLAUDE|SKILL)\.md$
+  args: [--min-severity, warning]

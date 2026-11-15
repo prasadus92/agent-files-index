@@ -1,0 +1,12 @@
+{
+  "title": "Agent Files Index: features of public AGENTS.md, CLAUDE.md and SKILL.md files",
+  "upload_type": "dataset",
+  "description": "<p>Structural features of agent instruction files (AGENTS.md, CLAUDE.md, SKILL.md) in public GitHub repositories: a census of repos with 1,000 or more stars pushed in the 12 months to 15 November 2026, and a self-weighting 5% day sample of repos with 100 to 999 stars. Derived features only, no file text. Includes agentfiles, a lint checker (MIT) whose rules come from the data and from published guidance.</p>",
+  "creators": [{"name": "Subrahmanya, Prasad"}],
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "keywords": ["AGENTS.md", "CLAUDE.md", "SKILL.md", "coding agents", "context files", "dataset", "linter"],
+  "related_identifiers": [
+    {"identifier": "https://prasad.tech/blog/agent-files-index/", "relation": "isDocumentedBy", "resource_type": "publication-other"}
+  ]
+}

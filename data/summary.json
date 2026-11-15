@@ -1,0 +1,966 @@
+{
+  "frame": {
+    "snapshot": "2026-11-15",
+    "A_repos": 38272,
+    "A_reported_by_search": 38274,
+    "B_repos": 7912,
+    "B_days_sampled": 345,
+    "B_days_total": 6893,
+    "B_weight": 19.98,
+    "B_population_estimate": 158079,
+    "files": 42106,
+    "files_by_kind": {
+      "skill_md": 29352,
+      "agents_md": 7502,
+      "claude_md": 5252
+    },
+    "files_by_kind_A": {
+      "skill_md": 26280,
+      "agents_md": 6634,
+      "claude_md": 4592
+    }
+  },
+  "adoption": {
+    "A": {
+      "has_agents_md": 17.3,
+      "has_claude_any": 12.0,
+      "has_either": 21.3,
+      "has_both": 8.0,
+      "has_skills": 9.6,
+      "has_claude_dir": 7.1,
+      "has_mcp_json": 0.9,
+      "has_copilot": 3.5,
+      "has_cursor": 1.4,
+      "has_gemini_md": 0.6,
+      "has_agent_md": 0.2,
+      "has_windsurfrules": 0.1,
+      "has_any_agent_file": 25.5
+    },
+    "B": {
+      "has_agents_md": 10.9,
+      "has_claude_any": 8.3,
+      "has_either": 15.2,
+      "has_both": 4.1,
+      "has_skills": 5.7,
+      "has_claude_dir": 4.1,
+      "has_mcp_json": 0.7,
+      "has_copilot": 1.5,
+      "has_cursor": 0.8,
+      "has_gemini_md": 0.4,
+      "has_agent_md": 0.1,
+      "has_windsurfrules": 0.0,
+      "has_any_agent_file": 17.9
+    },
+    "all_100plus": {
+      "has_agents_md": 12.2,
+      "has_claude_any": 9.0,
+      "has_either": 16.4,
+      "has_both": 4.9,
+      "has_skills": 6.5,
+      "has_claude_dir": 4.7,
+      "has_mcp_json": 0.7,
+      "has_copilot": 1.9,
+      "has_cursor": 0.9,
+      "has_gemini_md": 0.4,
+      "has_agent_md": 0.1,
+      "has_windsurfrules": 0.0,
+      "has_any_agent_file": 19.4
+    },
+    "by_stars_A": {
+      "1000-1999": {
+        "n": 16669,
+        "has_agents_md": 14.0,
+        "has_claude_any": 10.1,
+        "has_either": 17.8,
+        "has_skills": 7.5
+      },
+      "2000-4999": {
+        "n": 12346,
+        "has_agents_md": 16.1,
+        "has_claude_any": 11.1,
+        "has_either": 19.9,
+        "has_skills": 8.9
+      },
+      "5000-9999": {
+        "n": 4796,
+        "has_agents_md": 21.4,
+        "has_claude_any": 14.9,
+        "has_either": 26.0,
+        "has_skills": 11.9
+      },
+      "10000-49999": {
+        "n": 3973,
+        "has_agents_md": 27.1,
+        "has_claude_any": 17.4,
+        "has_either": 31.5,
+        "has_skills": 15.7
+      },
+      "50000-max": {
+        "n": 488,
+        "has_agents_md": 43.2,
+        "has_claude_any": 24.2,
+        "has_either": 47.5,
+        "has_skills": 28.9
+      }
+    },
+    "by_language_A": {
+      "Python": {
+        "n": 7127,
+        "has_agents_md": 16.8,
+        "has_claude_any": 12.8,
+        "has_either": 21.3
+      },
+      "TypeScript": {
+        "n": 5213,
+        "has_agents_md": 31.3,
+        "has_claude_any": 22.5,
+        "has_either": 37.8
+      },
+      "JavaScript": {
+        "n": 3222,
+        "has_agents_md": 11.2,
+        "has_claude_any": 8.6,
+        "has_either": 15.1
+      },
+      "Go": {
+        "n": 2794,
+        "has_agents_md": 22.5,
+        "has_claude_any": 15.1,
+        "has_either": 26.6
+      },
+      "C++": {
+        "n": 2213,
+        "has_agents_md": 14.7,
+        "has_claude_any": 7.7,
+        "has_either": 17.3
+      },
+      "Rust": {
+        "n": 2099,
+        "has_agents_md": 27.9,
+        "has_claude_any": 17.6,
+        "has_either": 32.2
+      },
+      "Java": {
+        "n": 1641,
+        "has_agents_md": 18.4,
+        "has_claude_any": 10.8,
+        "has_either": 21.8
+      },
+      "C": {
+        "n": 1614,
+        "has_agents_md": 10.9,
+        "has_claude_any": 6.4,
+        "has_either": 13.4
+      },
+      "C#": {
+        "n": 1210,
+        "has_agents_md": 17.2,
+        "has_claude_any": 11.2,
+        "has_either": 22.3
+      },
+      "PHP": {
+        "n": 1080,
+        "has_agents_md": 13.1,
+        "has_claude_any": 8.7,
+        "has_either": 17.2
+      },
+      "Shell": {
+        "n": 970,
+        "has_agents_md": 8.8,
+        "has_claude_any": 6.9,
+        "has_either": 12.4
+      },
+      "HTML": {
+        "n": 809,
+        "has_agents_md": 10.9,
+        "has_claude_any": 9.0,
+        "has_either": 14.5
+      },
+      "Kotlin": {
+        "n": 781,
+        "has_agents_md": 20.7,
+        "has_claude_any": 15.2,
+        "has_either": 25.9
+      },
+      "Swift": {
+        "n": 672,
+        "has_agents_md": 21.9,
+        "has_claude_any": 16.4,
+        "has_either": 25.6
+      },
+      "Ruby": {
+        "n": 597,
+        "has_agents_md": 13.6,
+        "has_claude_any": 8.7,
+        "has_either": 16.1
+      },
+      "Jupyter Notebook": {
+        "n": 524,
+        "has_agents_md": 7.1,
+        "has_claude_any": 2.7,
+        "has_either": 8.4
+      }
+    },
+    "by_created_year_A": {
+      "2009": {
+        "n": 267,
+        "has_either": 22.1
+      },
+      "2010": {
+        "n": 518,
+        "has_either": 18.9
+      },
+      "2011": {
+        "n": 926,
+        "has_either": 20.5
+      },
+      "2012": {
+        "n": 1154,
+        "has_either": 17.5
+      },
+      "2013": {
+        "n": 1604,
+        "has_either": 16.0
+      },
+      "2014": {
+        "n": 1942,
+        "has_either": 15.7
+      },
+      "2015": {
+        "n": 2491,
+        "has_either": 17.3
+      },
+      "2016": {
+        "n": 2574,
+        "has_either": 16.7
+      },
+      "2017": {
+        "n": 2593,
+        "has_either": 15.4
+      },
+      "2018": {
+        "n": 2571,
+        "has_either": 16.0
+      },
+      "2019": {
+        "n": 2684,
+        "has_either": 16.4
+      },
+      "2020": {
+        "n": 2852,
+        "has_either": 17.3
+      },
+      "2021": {
+        "n": 2239,
+        "has_either": 20.1
+      },
+      "2022": {
+        "n": 2203,
+        "has_either": 19.5
+      },
+      "2023": {
+        "n": 2467,
+        "has_either": 21.7
+      },
+      "2024": {
+        "n": 2201,
+        "has_either": 23.6
+      },
+      "2025": {
+        "n": 2862,
+        "has_either": 32.3
+      },
+      "2026": {
+        "n": 4008,
+        "has_either": 38.9
+      }
+    }
+  },
+  "files_A": {
+    "agents_md": {
+      "n": 6402,
+      "lines": {
+        "median": 96.0,
+        "p90": 315.90000000000055,
+        "max": 5532
+      },
+      "bytes": {
+        "median": 5892.5,
+        "p90": 20316.60000000002,
+        "max": 512000
+      },
+      "est_tokens": {
+        "median": 1404.5,
+        "p90": 4917.700000000007,
+        "max": 127872
+      },
+      "n_headings": {
+        "median": 9.0,
+        "p90": 24.0,
+        "max": 123
+      },
+      "n_commands": {
+        "median": 6.0,
+        "p90": 21.0,
+        "max": 167
+      },
+      "n_never": {
+        "median": 4.0,
+        "p90": 21.0,
+        "max": 505
+      },
+      "n_must": {
+        "median": 2.0,
+        "p90": 12.0,
+        "max": 177
+      },
+      "mentions_tests": 84.4,
+      "mentions_ci": 54.4,
+      "mentions_security": 49.2,
+      "has_any_command": 81.2,
+      "has_test_cmd": 57.4,
+      "has_lint_cmd": 33.8,
+      "has_build_cmd": 50.8,
+      "has_typecheck_cmd": 15.4,
+      "has_format_cmd": 24.8,
+      "has_install_cmd": 35.3,
+      "sections": {
+        "overview": 23.0,
+        "setup": 19.9,
+        "commands": 46.1,
+        "build": 27.1,
+        "testing": 51.2,
+        "lint_format": 14.3,
+        "architecture": 50.1,
+        "code_style": 51.4,
+        "git_pr": 49.1,
+        "security": 12.9,
+        "deployment": 12.3,
+        "config": 11.5,
+        "documentation": 23.2,
+        "dependencies": 12.5,
+        "troubleshooting": 10.3,
+        "boundaries": 35.9,
+        "agent_workflow": 75.7
+      },
+      "single_commit": 20.0,
+      "commits_median": 5.0,
+      "files_with_checked_paths": 5347,
+      "files_with_missing_path": 27.1,
+      "any_lint_warning_or_error": 56.8,
+      "over_200_lines": 21.6,
+      "over_32kib": 4.0
+    },
+    "claude_md": {
+      "n": 3802,
+      "lines": {
+        "median": 55.0,
+        "p90": 287.0,
+        "max": 5602
+      },
+      "bytes": {
+        "median": 2833.0,
+        "p90": 16676.7,
+        "max": 512000
+      },
+      "est_tokens": {
+        "median": 672.0,
+        "p90": 4010.9,
+        "max": 127263
+      },
+      "n_headings": {
+        "median": 6.0,
+        "p90": 24.0,
+        "max": 212
+      },
+      "n_commands": {
+        "median": 2.0,
+        "p90": 19.0,
+        "max": 147
+      },
+      "n_never": {
+        "median": 0.0,
+        "p90": 12.0,
+        "max": 561
+      },
+      "n_must": {
+        "median": 0.0,
+        "p90": 8.0,
+        "max": 157
+      },
+      "mentions_tests": 54.4,
+      "mentions_ci": 33.0,
+      "mentions_security": 31.7,
+      "has_any_command": 55.4,
+      "has_test_cmd": 40.1,
+      "has_lint_cmd": 23.8,
+      "has_build_cmd": 37.1,
+      "has_typecheck_cmd": 11.0,
+      "has_format_cmd": 17.0,
+      "has_install_cmd": 25.9,
+      "sections": {
+        "overview": 26.3,
+        "setup": 15.7,
+        "commands": 39.8,
+        "build": 22.6,
+        "testing": 33.5,
+        "lint_format": 10.4,
+        "architecture": 43.7,
+        "code_style": 37.2,
+        "git_pr": 23.8,
+        "security": 6.6,
+        "deployment": 11.8,
+        "config": 14.0,
+        "documentation": 12.9,
+        "dependencies": 11.0,
+        "troubleshooting": 8.8,
+        "boundaries": 23.2,
+        "agent_workflow": 59.8
+      },
+      "single_commit": 34.0,
+      "commits_median": 3.0,
+      "files_with_checked_paths": 2217,
+      "files_with_missing_path": 28.6,
+      "any_lint_warning_or_error": 46.0,
+      "over_200_lines": 16.5,
+      "over_32kib": 3.7
+    },
+    "skill_md": {
+      "n": 26280,
+      "lines": {
+        "median": 126.0,
+        "p90": 372.1000000000022,
+        "max": 4735
+      },
+      "bytes": {
+        "median": 6609.5,
+        "p90": 18745.200000000004,
+        "max": 320516
+      },
+      "est_tokens": {
+        "median": 1581.0,
+        "p90": 4562.100000000002,
+        "max": 79878
+      },
+      "n_headings": {
+        "median": 9.0,
+        "p90": 24.0,
+        "max": 186
+      },
+      "n_commands": {
+        "median": 1.0,
+        "p90": 10.0,
+        "max": 497
+      },
+      "n_never": {
+        "median": 3.0,
+        "p90": 15.0,
+        "max": 190
+      },
+      "n_must": {
+        "median": 2.0,
+        "p90": 8.0,
+        "max": 104
+      },
+      "mentions_tests": 56.5,
+      "mentions_ci": 25.2,
+      "mentions_security": 42.2,
+      "has_any_command": 54.4,
+      "has_test_cmd": 12.8,
+      "has_lint_cmd": 4.6,
+      "has_build_cmd": 12.0,
+      "has_typecheck_cmd": 2.9,
+      "has_format_cmd": 3.4,
+      "has_install_cmd": 11.8,
+      "sections": {
+        "overview": 14.0,
+        "setup": 20.1,
+        "commands": 34.0,
+        "build": 8.3,
+        "testing": 24.5,
+        "lint_format": 11.7,
+        "architecture": 17.5,
+        "code_style": 19.1,
+        "git_pr": 22.7,
+        "security": 8.0,
+        "deployment": 6.9,
+        "config": 8.1,
+        "documentation": 7.2,
+        "dependencies": 5.9,
+        "troubleshooting": 12.3,
+        "boundaries": 31.4,
+        "agent_workflow": 35.1
+      },
+      "any_lint_warning_or_error": 10.3,
+      "over_200_lines": 29.9,
+      "over_32kib": 2.5
+    }
+  },
+  "files_B": {
+    "agents_md": {
+      "n": 855,
+      "lines": {
+        "median": 86.0,
+        "p90": 327.60000000000014,
+        "max": 3134
+      },
+      "bytes": {
+        "median": 5360.0,
+        "p90": 20436.2,
+        "max": 204952
+      },
+      "est_tokens": {
+        "median": 1248.0,
+        "p90": 4851.800000000001,
+        "max": 50941
+      },
+      "n_headings": {
+        "median": 8.0,
+        "p90": 24.0,
+        "max": 111
+      },
+      "n_commands": {
+        "median": 5.0,
+        "p90": 18.0,
+        "max": 73
+      },
+      "n_never": {
+        "median": 3.0,
+        "p90": 19.0,
+        "max": 201
+      },
+      "n_must": {
+        "median": 2.0,
+        "p90": 11.0,
+        "max": 88
+      },
+      "mentions_tests": 78.7,
+      "mentions_ci": 45.8,
+      "mentions_security": 49.0,
+      "has_any_command": 79.2,
+      "has_test_cmd": 50.3,
+      "has_lint_cmd": 24.3,
+      "has_build_cmd": 43.9,
+      "has_typecheck_cmd": 13.9,
+      "has_format_cmd": 20.2,
+      "has_install_cmd": 33.7,
+      "sections": {
+        "overview": 20.8,
+        "setup": 15.9,
+        "commands": 43.0,
+        "build": 23.5,
+        "testing": 46.1,
+        "lint_format": 11.9,
+        "architecture": 48.4,
+        "code_style": 42.1,
+        "git_pr": 42.2,
+        "security": 12.5,
+        "deployment": 11.8,
+        "config": 11.6,
+        "documentation": 20.4,
+        "dependencies": 10.6,
+        "troubleshooting": 10.1,
+        "boundaries": 34.5,
+        "agent_workflow": 73.9
+      },
+      "single_commit": 24.9,
+      "commits_median": 4.0,
+      "files_with_checked_paths": 682,
+      "files_with_missing_path": 29.3,
+      "any_lint_warning_or_error": 63.0,
+      "over_200_lines": 22.3,
+      "over_32kib": 4.9
+    },
+    "claude_md": {
+      "n": 592,
+      "lines": {
+        "median": 76.0,
+        "p90": 294.9,
+        "max": 3336
+      },
+      "bytes": {
+        "median": 4142.0,
+        "p90": 18162.299999999996,
+        "max": 215412
+      },
+      "est_tokens": {
+        "median": 992.0,
+        "p90": 4214.4,
+        "max": 53577
+      },
+      "n_headings": {
+        "median": 8.0,
+        "p90": 23.0,
+        "max": 114
+      },
+      "n_commands": {
+        "median": 4.0,
+        "p90": 16.0,
+        "max": 121
+      },
+      "n_never": {
+        "median": 1.0,
+        "p90": 12.0,
+        "max": 153
+      },
+      "n_must": {
+        "median": 1.0,
+        "p90": 8.0,
+        "max": 80
+      },
+      "mentions_tests": 64.9,
+      "mentions_ci": 35.0,
+      "mentions_security": 38.7,
+      "has_any_command": 66.6,
+      "has_test_cmd": 43.4,
+      "has_lint_cmd": 22.0,
+      "has_build_cmd": 41.7,
+      "has_typecheck_cmd": 10.8,
+      "has_format_cmd": 15.9,
+      "has_install_cmd": 28.0,
+      "sections": {
+        "overview": 30.1,
+        "setup": 18.6,
+        "commands": 44.9,
+        "build": 21.3,
+        "testing": 34.1,
+        "lint_format": 11.1,
+        "architecture": 50.2,
+        "code_style": 36.1,
+        "git_pr": 23.1,
+        "security": 8.1,
+        "deployment": 12.8,
+        "config": 18.2,
+        "documentation": 13.9,
+        "dependencies": 9.8,
+        "troubleshooting": 7.9,
+        "boundaries": 27.5,
+        "agent_workflow": 64.5
+      },
+      "single_commit": 33.1,
+      "commits_median": 3.0,
+      "files_with_checked_paths": 388,
+      "files_with_missing_path": 30.9,
+      "any_lint_warning_or_error": 56.6,
+      "over_200_lines": 19.6,
+      "over_32kib": 4.9
+    },
+    "skill_md": {
+      "n": 3072,
+      "lines": {
+        "median": 125.0,
+        "p90": 341.0,
+        "max": 2895
+      },
+      "bytes": {
+        "median": 6177.0,
+        "p90": 16392.9,
+        "max": 238556
+      },
+      "est_tokens": {
+        "median": 1496.0,
+        "p90": 3931.8,
+        "max": 59485
+      },
+      "n_headings": {
+        "median": 10.0,
+        "p90": 22.0,
+        "max": 93
+      },
+      "n_commands": {
+        "median": 0.0,
+        "p90": 9.0,
+        "max": 72
+      },
+      "n_never": {
+        "median": 3.0,
+        "p90": 12.0,
+        "max": 214
+      },
+      "n_must": {
+        "median": 1.0,
+        "p90": 7.0,
+        "max": 83
+      },
+      "mentions_tests": 57.1,
+      "mentions_ci": 22.4,
+      "mentions_security": 38.7,
+      "has_any_command": 49.9,
+      "has_test_cmd": 10.2,
+      "has_lint_cmd": 4.1,
+      "has_build_cmd": 9.5,
+      "has_typecheck_cmd": 2.1,
+      "has_format_cmd": 2.2,
+      "has_install_cmd": 8.9,
+      "sections": {
+        "overview": 14.0,
+        "setup": 15.7,
+        "commands": 31.5,
+        "build": 8.2,
+        "testing": 23.2,
+        "lint_format": 10.0,
+        "architecture": 18.0,
+        "code_style": 20.9,
+        "git_pr": 19.3,
+        "security": 6.1,
+        "deployment": 6.4,
+        "config": 8.2,
+        "documentation": 6.7,
+        "dependencies": 5.3,
+        "troubleshooting": 13.7,
+        "boundaries": 27.5,
+        "agent_workflow": 33.5
+      },
+      "any_lint_warning_or_error": 8.4,
+      "over_200_lines": 27.6,
+      "over_32kib": 1.9
+    }
+  },
+  "both_files": {
+    "repos_A": 2968,
+    "link_share": {
+      "import": 38.3,
+      "symlink": 24.6,
+      "none": 20.1,
+      "mention": 16.1,
+      "symlink_other": 0.9
+    },
+    "near_duplicate": 4.8
+  },
+  "skills": {
+    "files": 29352,
+    "repos": 4130,
+    "repos_A": 3680,
+    "has_frontmatter": 98.9,
+    "has_allowed_tools": 8.9,
+    "description_len_median": 246.0,
+    "body_over_500_lines": 4.3,
+    "files_with_rule": {
+      "AF104": 0.5,
+      "AF203": 4.3,
+      "AF304": 1.1,
+      "AF305": 0.5,
+      "AF306": 0.7,
+      "AF501": 1.1,
+      "AF502": 3.5,
+      "AF503": 0.6,
+      "AF504": 0.0,
+      "AF505": 0.2
+    }
+  },
+  "lint_rule_share": {
+    "agents_md": {
+      "AF104": 0.5,
+      "AF202": 4.1,
+      "AF204": 0.1,
+      "AF301": 40.3,
+      "AF302": 37.7,
+      "AF303": 0.4,
+      "AF304": 0.2,
+      "AF305": 1.3,
+      "AF306": 1.4,
+      "AF401": 22.7,
+      "AF403": 1.6
+    },
+    "claude_md": {
+      "AF104": 0.3,
+      "AF201": 17.0,
+      "AF204": 0.2,
+      "AF301": 23.0,
+      "AF302": 20.5,
+      "AF303": 0.5,
+      "AF304": 0.1,
+      "AF305": 0.5,
+      "AF306": 1.0,
+      "AF401": 17.1,
+      "AF601": 16.3,
+      "AF602": 3.0
+    },
+    "skill_md": {
+      "AF104": 0.5,
+      "AF203": 4.3,
+      "AF304": 1.1,
+      "AF305": 0.5,
+      "AF306": 0.7,
+      "AF501": 1.1,
+      "AF502": 3.5,
+      "AF503": 0.6,
+      "AF504": 0.0,
+      "AF505": 0.2
+    }
+  },
+  "top_headings_A": {
+    "agents.md": {
+      "files": 1744,
+      "share": 17.1
+    },
+    "claude.md": {
+      "files": 1435,
+      "share": 14.1
+    },
+    "project overview": {
+      "files": 1433,
+      "share": 14.0
+    },
+    "architecture": {
+      "files": 1402,
+      "share": 13.7
+    },
+    "testing": {
+      "files": 1375,
+      "share": 13.5
+    },
+    "commands": {
+      "files": 977,
+      "share": 9.6
+    },
+    "code style": {
+      "files": 706,
+      "share": 6.9
+    },
+    "conventions": {
+      "files": 542,
+      "share": 5.3
+    },
+    "project structure": {
+      "files": 524,
+      "share": 5.1
+    },
+    "documentation": {
+      "files": 455,
+      "share": 4.5
+    },
+    "tests": {
+      "files": 362,
+      "share": 3.5
+    },
+    "development commands": {
+      "files": 336,
+      "share": 3.3
+    },
+    "common commands": {
+      "files": 298,
+      "share": 2.9
+    },
+    "development workflow": {
+      "files": 298,
+      "share": 2.9
+    },
+    "repository guidelines": {
+      "files": 290,
+      "share": 2.8
+    },
+    "pull requests": {
+      "files": 277,
+      "share": 2.7
+    },
+    "overview": {
+      "files": 275,
+      "share": 2.7
+    },
+    "running tests": {
+      "files": 268,
+      "share": 2.6
+    },
+    "build commands": {
+      "files": 263,
+      "share": 2.6
+    },
+    "repository structure": {
+      "files": 262,
+      "share": 2.6
+    },
+    "testing guidelines": {
+      "files": 256,
+      "share": 2.5
+    },
+    "architecture overview": {
+      "files": 250,
+      "share": 2.5
+    },
+    "error handling": {
+      "files": 239,
+      "share": 2.3
+    },
+    "code conventions": {
+      "files": 234,
+      "share": 2.3
+    },
+    "layout": {
+      "files": 223,
+      "share": 2.2
+    },
+    "code quality": {
+      "files": 222,
+      "share": 2.2
+    },
+    "repository layout": {
+      "files": 212,
+      "share": 2.1
+    },
+    "rules": {
+      "files": 211,
+      "share": 2.1
+    },
+    "skills": {
+      "files": 209,
+      "share": 2.0
+    },
+    "agent instructions": {
+      "files": 207,
+      "share": 2.0
+    },
+    "configuration": {
+      "files": 206,
+      "share": 2.0
+    },
+    "build, test, and development commands": {
+      "files": 202,
+      "share": 2.0
+    },
+    "commit & pull request guidelines": {
+      "files": 193,
+      "share": 1.9
+    },
+    "tech stack": {
+      "files": 191,
+      "share": 1.9
+    },
+    "project structure & module organization": {
+      "files": 189,
+      "share": 1.9
+    },
+    "build": {
+      "files": 189,
+      "share": 1.9
+    },
+    "dependencies": {
+      "files": 187,
+      "share": 1.8
+    },
+    "coding style & naming conventions": {
+      "files": 185,
+      "share": 1.8
+    },
+    "building": {
+      "files": 181,
+      "share": 1.8
+    },
+    "development": {
+      "files": 176,
+      "share": 1.7
+    }
+  },
+  "secret_like": {
+    "file_pattern_pairs_raw_regex": 119,
+    "file_pattern_pairs_after_filters": 2,
+    "after_filters_by_pattern": {
+      "aws_access_key_id": 2
+    }
+  },
+  "risky_text_files": {
+    "home_directory_path": 496,
+    "prompt_injection_like": 4
+  },
+  "pipe_to_shell_files": 188
+}

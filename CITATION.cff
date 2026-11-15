@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "Copyright Prasad Subrahmanya (https://prasad.tech). If you use this dataset or the checker, please cite it as below."
+title: "Agent Files Index: features of public AGENTS.md, CLAUDE.md and SKILL.md files"
+type: dataset
+authors:
+  - family-names: Subrahmanya
+    given-names: Prasad
+    website: "https://prasad.tech"
+version: "2026.11"
+date-released: "2026-11-15"
+license: CC-BY-4.0
+repository-code: "https://github.com/prasadus92/agent-files-index"
+url: "https://prasad.tech/blog/agent-files-index/"
+abstract: >-
+  Structural features of agent instruction files (AGENTS.md, CLAUDE.md, SKILL.md) in public
+  GitHub repositories: a census of repos with 1,000 or more stars pushed in the 12 months to
+  15 November 2026, plus a self-weighting 5% day sample of repos with 100 to 999 stars. Published
+  as derived features only (no file text), with a lint checker whose rules come from the data and
+  from published guidance. The checker code is MIT licensed.
+keywords:
+  - AGENTS.md
+  - CLAUDE.md
+  - SKILL.md
+  - coding agents
+  - context files
+  - dataset
+  - linter

@@ -1,0 +1,28 @@
+name: agentfiles lint
+description: Lint AGENTS.md, CLAUDE.md and SKILL.md files in a repository.
+branding:
+  icon: check-square
+  color: gray-dark
+inputs:
+  path:
+    description: File or folder to lint.
+    default: "."
+  min-severity:
+    description: Lowest severity to report (info, warning or error).
+    default: warning
+  strict:
+    description: Fail on warnings as well as errors.
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        AF_PATH: ${{ inputs.path }}
+        AF_MIN: ${{ inputs.min-severity }}
+        AF_STRICT: ${{ inputs.strict }}
+        PYTHONPATH: ${{ github.action_path }}
+      run: |
+        args=(lint "$AF_PATH" --min-severity "$AF_MIN")
+        if [ "$AF_STRICT" = "true" ]; then args+=(--strict); fi
+        python3 -m agentfiles "${args[@]}"

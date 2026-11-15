@@ -1,0 +1,40 @@
+<svg viewBox="0 0 640 430" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<text class="tk" x="0" y="20">Sections found in CLAUDE.md files</text>
+<text class="t" x="0" y="54" style="font-size:13.5px">agent workflow</text>
+<rect class="box-accent" x="230" y="40" width="314.3" height="18" rx="2"/>
+<text class="ts" x="552.3" y="54">60.3%</text>
+<text class="t" x="0" y="84" style="font-size:13.5px">architecture</text>
+<rect class="box-accent" x="230" y="70" width="231.9" height="18" rx="2"/>
+<text class="ts" x="469.9" y="84">44.5%</text>
+<text class="t" x="0" y="114" style="font-size:13.5px">commands</text>
+<rect class="box-accent" x="230" y="100" width="211.1" height="18" rx="2"/>
+<text class="ts" x="449.1" y="114">40.5%</text>
+<text class="t" x="0" y="144" style="font-size:13.5px">code style</text>
+<rect class="box-accent" x="230" y="130" width="193.4" height="18" rx="2"/>
+<text class="ts" x="431.4" y="144">37.1%</text>
+<text class="t" x="0" y="174" style="font-size:13.5px">testing</text>
+<rect class="box-accent" x="230" y="160" width="174.6" height="18" rx="2"/>
+<text class="ts" x="412.6" y="174">33.5%</text>
+<text class="t" x="0" y="204" style="font-size:13.5px">overview</text>
+<rect class="box-accent" x="230" y="190" width="139.7" height="18" rx="2"/>
+<text class="ts" x="377.7" y="204">26.8%</text>
+<text class="t" x="0" y="234" style="font-size:13.5px">git pr</text>
+<rect class="box-accent" x="230" y="220" width="123.5" height="18" rx="2"/>
+<text class="ts" x="361.5" y="234">23.7%</text>
+<text class="t" x="0" y="264" style="font-size:13.5px">boundaries</text>
+<rect class="box-accent" x="230" y="250" width="123.5" height="18" rx="2"/>
+<text class="ts" x="361.5" y="264">23.7%</text>
+<text class="t" x="0" y="294" style="font-size:13.5px">build</text>
+<rect class="box-accent" x="230" y="280" width="117.3" height="18" rx="2"/>
+<text class="ts" x="355.3" y="294">22.5%</text>
+<text class="t" x="0" y="324" style="font-size:13.5px">setup</text>
+<rect class="box-accent" x="230" y="310" width="83.9" height="18" rx="2"/>
+<text class="ts" x="321.9" y="324">16.1%</text>
+<text class="t" x="0" y="354" style="font-size:13.5px">config</text>
+<rect class="box-accent" x="230" y="340" width="76.1" height="18" rx="2"/>
+<text class="ts" x="314.1" y="354">14.6%</text>
+<text class="t" x="0" y="384" style="font-size:13.5px">documentation</text>
+<rect class="box-accent" x="230" y="370" width="68.3" height="18" rx="2"/>
+<text class="ts" x="306.3" y="384">13.1%</text>
+<text class="tn" x="0" y="422">4,394 CLAUDE.md files; headings matched to 17 categories.</text>
+</svg>

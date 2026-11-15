@@ -1,0 +1,24 @@
+[project]
+name = "agent-files-index"
+version = "0.1.0"
+description = "Lint AGENTS.md, CLAUDE.md and SKILL.md files, with rules drawn from the Agent Files Index dataset"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Prasad Subrahmanya" }]
+dependencies = []
+
+[project.scripts]
+agentfiles = "agentfiles.cli:main"
+
+[dependency-groups]
+data = ["pandas>=2.2", "pyarrow>=17", "matplotlib>=3.9"]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agentfiles"]

@@ -1,0 +1,22 @@
+<svg viewBox="0 0 640 250" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<text class="tk" x="0" y="20">Files that tell the agent which command to run</text>
+<text class="t" x="0" y="54" style="font-size:13.5px">AGENTS.md: any command</text>
+<rect class="box-accent" x="230" y="40" width="314.3" height="18" rx="2"/>
+<text class="ts" x="552.3" y="54">81.0%</text>
+<text class="t" x="0" y="84" style="font-size:13.5px">AGENTS.md: a test command</text>
+<rect class="box-accent" x="230" y="70" width="241.0" height="18" rx="2"/>
+<text class="ts" x="479.0" y="84">62.1%</text>
+<text class="t" x="0" y="114" style="font-size:13.5px">AGENTS.md: a lint command</text>
+<rect class="box-accent" x="230" y="100" width="126.9" height="18" rx="2"/>
+<text class="ts" x="364.9" y="114">32.7%</text>
+<text class="t" x="0" y="144" style="font-size:13.5px">CLAUDE.md: any command</text>
+<rect class="box-accent" x="230" y="130" width="220.8" height="18" rx="2"/>
+<text class="ts" x="458.8" y="144">56.9%</text>
+<text class="t" x="0" y="174" style="font-size:13.5px">CLAUDE.md: a test command</text>
+<rect class="box-accent" x="230" y="160" width="168.4" height="18" rx="2"/>
+<text class="ts" x="406.4" y="174">43.4%</text>
+<text class="t" x="0" y="204" style="font-size:13.5px">CLAUDE.md: a lint command</text>
+<rect class="box-accent" x="230" y="190" width="91.2" height="18" rx="2"/>
+<text class="ts" x="329.2" y="204">23.5%</text>
+<text class="tn" x="0" y="242">Commands found in shell code blocks or inline code.</text>
+</svg>

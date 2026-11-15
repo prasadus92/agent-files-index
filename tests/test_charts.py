@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -53,10 +54,14 @@ class ChartTests(unittest.TestCase):
             starts = {round(s.x, 1) for s in d.shapes if isinstance(s, charts.Bar) and s.h > 10}
             self.assertEqual(starts, {round(self.label_w, 1)}, chart.slug)
 
-    def test_post_figure_uses_the_site_font(self):
-        markup = charts.figure(next(iter(self.built.values())), self.label_w)
-        self.assertIn("var(--dg-font)", markup)
-        self.assertNotIn("Instrument Sans", markup)
+    def test_post_figure_text_uses_the_site_font_with_a_fallback(self):
+        for chart in self.built.values():
+            markup = charts.figure(chart, self.label_w)
+            texts = re.findall(r"<text [^>]*>", markup)
+            self.assertTrue(texts)
+            for tag in texts:
+                self.assertRegex(tag, r"font:\d{3} \d+px var\(--dg-font, system-ui, sans-serif\);", chart.slug)
+            self.assertNotIn("Instrument Sans", markup)
 
     def test_post_figure_has_no_blank_lines(self):
         for chart in self.built.values():

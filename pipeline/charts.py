@@ -24,7 +24,8 @@ from fontTools.ttLib import TTFont
 FONT_DIR = Path(__file__).parent / "fonts"
 FONT_FILES = {400: FONT_DIR / "InstrumentSans-Regular.ttf", 600: FONT_DIR / "InstrumentSans-SemiBold.ttf"}
 FAMILY = "Instrument Sans"
-SITE_FAMILY = "'Instrument Sans Variable','Instrument Sans',system-ui,sans-serif"
+# The site's own body face; the 16px wrap slack covers its width difference from the measured font.
+SITE_FAMILY = "var(--dg-font)"
 REPO_URL = "github.com/prasadus92/agent-files-index"
 
 WIDTH, PAD, PNG_ZOOM = 720, 32, 2

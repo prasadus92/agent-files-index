@@ -53,6 +53,11 @@ class ChartTests(unittest.TestCase):
             starts = {round(s.x, 1) for s in d.shapes if isinstance(s, charts.Bar) and s.h > 10}
             self.assertEqual(starts, {round(self.label_w, 1)}, chart.slug)
 
+    def test_post_figure_uses_the_site_font(self):
+        markup = charts.figure(next(iter(self.built.values())), self.label_w)
+        self.assertIn("var(--dg-font)", markup)
+        self.assertNotIn("Instrument Sans", markup)
+
     def test_post_figure_has_no_blank_lines(self):
         for chart in self.built.values():
             self.assertNotIn("\n\n", charts.figure(chart, self.label_w))

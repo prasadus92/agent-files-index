@@ -13,7 +13,12 @@ dependencies = []
 agentfiles = "agentfiles.cli:main"
 
 [dependency-groups]
-data = ["pandas>=3.1.1", "pyarrow>=26.0.1", "matplotlib>=3.11.2"]
+data = [
+    "pandas>=3.1.1",
+    "pyarrow>=26.0.1",
+    "fonttools>=4.68.0",
+    "resvg-py==0.5.0",
+]
 
 [build-system]
 requires = ["hatchling>=1.33.0"]

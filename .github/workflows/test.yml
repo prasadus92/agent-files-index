@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-python@v7.1.0
         with:
           python-version: ${{ matrix.python }}
+      - name: Chart layout dependency
+        run: python -m pip install fonttools==4.68.0
       - name: Unit tests
         run: python -m unittest discover -s tests -t . -v
       - name: Every rule has a failing test without it

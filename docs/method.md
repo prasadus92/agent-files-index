@@ -58,7 +58,7 @@ The `@import` rule (AF402) runs in the checker, which can see the local file sys
 
 ## Headings published
 
-A heading's text is published only when at least 5 repos use the same normalized heading and it contains no email address, URL or home-directory path. Every other heading keeps its level and categories with the text left blank. This keeps the table useful for "which sections do files have" without turning it into a copy of file text.
+A heading's text is published only when at least 5 repos use the same normalized heading and it contains no email address, URL, domain name (such as `example.com`) or home-directory path. Every other heading keeps its level and categories with the text left blank. This keeps the table useful for "which sections do files have" without turning it into a copy of file text.
 
 ## Secret-like strings
 

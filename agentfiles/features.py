@@ -28,7 +28,7 @@ INJECTION_RE = re.compile(
     r"\b(?:do not|don't|never) (?:reveal|disclose|mention) (?:this|these instructions|this file|that you) to the user\b")
 PIPE_SHELL_RE = re.compile(r"(?i)\b(?:curl|wget)\b[^\n|`]*https?://[^\n|`]*\|\s*(?:sudo\s+)?(?:ba|z)?sh(?:\s+-s\b|\s*(?:$|[`'\";)]))", re.M)
 TRAILING_PUNCT = ".,:;"
-NEGATION_RE = re.compile(r"(?i)\b(never|not|don't|do not|avoid|instead of|rather than)\b")
+NEGATION_RE = re.compile(r"(?i)\b(never|don't|do not|avoid|instead of|rather than)\b")
 
 
 @dataclass
@@ -98,13 +98,17 @@ def extract(text: str) -> Features:
 
 
 def _scan_lines(f: Features, lines: list[str]) -> None:
-    seen: set[str] = set()
+    seen: dict[str, int] = {}
 
     def add_command(raw: str, negated: bool = False) -> None:
         cmd = commands.parse_command(raw, negated)
-        if cmd and cmd.text not in seen:
-            seen.add(cmd.text)
+        if not cmd:
+            return
+        if cmd.text not in seen:
+            seen[cmd.text] = len(f.commands)
             f.commands.append(cmd)
+        elif f.commands[seen[cmd.text]].negated and not negated:
+            f.commands[seen[cmd.text]] = cmd
 
     for line in classify_lines(lines):
         if line.role == "fence_open":
@@ -119,9 +123,10 @@ def _scan_lines(f: Features, lines: list[str]) -> None:
                 f.section_categories |= classify_heading(normalized)
             continue
         f.n_bullets += bool(BULLET_RE.match(line.text))
-        negated = bool(NEGATION_RE.search(line.text))
-        for code in INLINE_CODE_RE.findall(line.text):
-            add_command(code, negated)
+        negation = NEGATION_RE.search(line.text)
+        for m in INLINE_CODE_RE.finditer(line.text):
+            code = m.group(1)
+            add_command(code, negated=bool(negation) and negation.end() <= m.start())
             candidate = code.strip().rstrip(TRAILING_PUNCT)
             if paths.looks_like_path(candidate):
                 f.inline_paths.append(candidate.removeprefix("./"))

@@ -31,9 +31,9 @@ def classify_lines(lines: Iterable[str]) -> Iterator[Line]:
     for text in lines:
         m = FENCE_RE.match(text)
         if m and lang is None:
-            lang, marker = m.group(2).lower(), m.group(1)[0]
+            lang, marker = m.group(2).lower(), m.group(1)
             yield Line(text, "fence_open", lang)
-        elif m and m.group(1)[0] == marker:
+        elif m and m.group(1)[0] == marker[0] and len(m.group(1)) >= len(marker) and not m.group(2):
             yield Line(text, "fence_close", lang)
             lang = None
         elif lang is not None:

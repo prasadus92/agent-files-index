@@ -6,6 +6,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 from agentfiles.cli import main
+from agentfiles.discover import is_link_to_sibling_agents_md
 
 LONG_CLAUDE = "# Claude\n\n" + "\n".join(f"- rule {i}" for i in range(210)) + "\n"
 
@@ -76,6 +77,7 @@ class CliTests(unittest.TestCase):
         self.write("AGENTS.md", "# A\n\n`pnpm test` and `pnpm lint`.\n")
         (self.root / ".claude").mkdir()
         (self.root / ".claude" / "CLAUDE.md").symlink_to("../AGENTS.md")
+        self.assertTrue(is_link_to_sibling_agents_md(self.root / ".claude" / "CLAUDE.md"))
         _, payload = run(str(self.root))
         self.assertEqual({f["file"] for f in payload["findings"]} - {"AGENTS.md"}, set())
 

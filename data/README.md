@@ -57,7 +57,7 @@ Full method, including the reason for repository search over code search: [`../d
 | --- | --- | --- |
 | `repos` | 1 per repo in the frame | Stars, language, license, dates, head commit, and a flag per agent file location |
 | `files` | 1 per agent file | Size, structure, commands, rule words, references, maintenance and lint counts |
-| `headings` | 1 per heading | Level and section categories, and the normalized text when 5 or more repos share it and it holds no email address, URL or home path |
+| `headings` | 1 per heading | Level and section categories, and the normalized text when 5 or more repos share it and it holds no email address, URL, domain name or home path |
 | `commands` | 1 per command | The tool (`pnpm`, `pytest`, or `./*` for a local script) and its kind; full command lines stay private |
 | `lint_findings` | 1 per rule hit | Rule id and severity per file; the secret, home-path and injection rules are excluded |
 | `secret_like_summary` | 1 per pattern, stratum and kind | Files matching the raw pattern and files left after filtering; no repo names |

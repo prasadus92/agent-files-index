@@ -15,7 +15,6 @@ FILTERS = f"is:public archived:false fork:false pushed:>={PUSHED_SINCE.isoformat
 
 
 def candidate_days() -> list[dt.date]:
-    """Every creation day from FIRST_DAY up to the day before the snapshot."""
     return [FIRST_DAY + dt.timedelta(d) for d in range((SNAPSHOT - FIRST_DAY).days)]
 
 

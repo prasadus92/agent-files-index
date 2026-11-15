@@ -15,7 +15,6 @@ def agents_md_link(claude_text: str) -> str:
 
 
 def similarity(a: str, b: str) -> float:
-    """Jaccard similarity of the sets of non-blank, whitespace-normalized lines."""
     sa, sb = _line_set(a), _line_set(b)
     if not sa or not sb:
         return 0.0

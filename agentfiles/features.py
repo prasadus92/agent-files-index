@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 from . import commands, paths, secrets
 from .markdown import (BULLET_RE, HEADING_RE, INLINE_CODE_RE, MD_LINK_RE, URL_RE, classify_lines, count_unquoted,
-                       lines_outside_fences, parse_frontmatter)
+                       parse_frontmatter)
 from .sections import classify_heading, normalize_heading
 
 IMPORT_EXTENSIONS = r"md|mdx|txt|json|ya?ml|toml"
@@ -28,6 +28,7 @@ INJECTION_RE = re.compile(
     r"\b(?:do not|don't|never) (?:reveal|disclose|mention) (?:this|these instructions|this file|that you) to the user\b")
 PIPE_SHELL_RE = re.compile(r"(?i)\b(?:curl|wget)\b[^\n|`]*https?://[^\n|`]*\|\s*(?:sudo\s+)?(?:ba|z)?sh(?:\s+-s\b|\s*(?:$|[`'\";)]))", re.M)
 TRAILING_PUNCT = ".,:;"
+NEGATION_RE = re.compile(r"(?i)\b(never|not|don't|do not|avoid|instead of|rather than)\b")
 
 
 @dataclass
@@ -73,7 +74,8 @@ class Features:
     def install_package_managers(self) -> set[str]:
         """JS package managers used for project installs; global installs such as `npm i -g pnpm` do not count."""
         return {c.head for c in self.commands
-                if c.head in commands.JS_PACKAGE_MANAGERS and "install" in c.kinds and not re.search(r"\s(-g|--global)\b", c.text)}
+                if c.head in commands.JS_PACKAGE_MANAGERS and "install" in c.kinds and not c.negated
+                and not re.search(r"\s(-g|--global)\b", c.text)}
 
 
 def extract(text: str) -> Features:
@@ -91,15 +93,15 @@ def extract(text: str) -> Features:
         body_lines=len(front.body.splitlines()),
     )
     _scan_lines(f, lines)
-    _scan_text(f, text, "\n".join(lines_outside_fences(lines)))
+    _scan_text(f, text, "\n".join(line.text for line in classify_lines(lines) if line.role == "text"))
     return f
 
 
 def _scan_lines(f: Features, lines: list[str]) -> None:
     seen: set[str] = set()
 
-    def add_command(raw: str) -> None:
-        cmd = commands.parse_command(raw)
+    def add_command(raw: str, negated: bool = False) -> None:
+        cmd = commands.parse_command(raw, negated)
         if cmd and cmd.text not in seen:
             seen.add(cmd.text)
             f.commands.append(cmd)
@@ -117,8 +119,9 @@ def _scan_lines(f: Features, lines: list[str]) -> None:
                 f.section_categories |= classify_heading(normalized)
             continue
         f.n_bullets += bool(BULLET_RE.match(line.text))
+        negated = bool(NEGATION_RE.search(line.text))
         for code in INLINE_CODE_RE.findall(line.text):
-            add_command(code)
+            add_command(code, negated)
             candidate = code.strip().rstrip(TRAILING_PUNCT)
             if paths.looks_like_path(candidate):
                 f.inline_paths.append(candidate.removeprefix("./"))

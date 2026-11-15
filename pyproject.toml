@@ -14,7 +14,6 @@ agentfiles = "agentfiles.cli:main"
 
 [dependency-groups]
 data = ["pandas>=3.1.1", "pyarrow>=26.0.1", "matplotlib>=3.11.2"]
-dev = ["pytest>=9.2.0"]
 
 [build-system]
 requires = ["hatchling>=1.33.0"]
@@ -24,4 +23,4 @@ build-backend = "hatchling.build"
 packages = ["agentfiles"]
 
 [tool.hatch.build.targets.sdist]
-include = ["agentfiles", "tests", "README.md", "LICENSE", "pyproject.toml"]
+include = ["/agentfiles", "/tests", "/README.md", "/LICENSE", "/pyproject.toml"]

@@ -15,7 +15,7 @@ Search reported 38,274 repos for stratum A and the crawl enumerated 38,272. Stra
 
 Every repo in stratum B has the same chance of selection, so the sample is self-weighting. To estimate the whole 100 to 999 star population, weight each B repo by 6,893 / 345 = 19.98. The `all_100plus` figures in `summary.json` use that weight. Everything else reports A and B separately, and the headline file statistics are for the census.
 
-## Why repository search instead of code search
+## Repository search and code search
 
 On the snapshot date, GitHub code search returned 1,353,728 hits for `filename:AGENTS.md`, 1,067,008 for `filename:CLAUDE.md` and 7,733,248 for `filename:SKILL.md`. It caps every query at 1,000 results, allows 10 queries a minute, and ranks by relevance, so a page of its results has no defined population behind it. A star-based frame names its population, and a census of it can be repeated.
 
@@ -64,11 +64,11 @@ A heading's text is published only when at least 5 repos use the same normalized
 
 The extractor looks for 11 patterns: key formats for AWS, GitHub, OpenAI, Anthropic, Slack, Google and Stripe live keys, private key headers, JWTs, connection strings with an inline password, and `password = "..."` style assignments. It skips placeholders (`your_api_key`, `xxxx`, `<token>`, `changeme`, `example`), local dev credentials (`postgres:password@localhost`), values shorter than 16 characters or below 3.5 bits of entropy per character for the generic patterns, private key headers with no key material after them, and the well-known example JWTs.
 
-Matched values never enter a derived file. The published tables hold counts by pattern, stratum and file kind, with no repo names. A remaining match looks like a secret; it can still be a revoked key or a test fixture.
+Matched values never enter a derived file. The published tables hold counts by pattern, stratum and file kind, with no repo names. Home-directory paths and injection-like text are reported the same way. A remaining match looks like a secret; it can still be a revoked key or a test fixture.
 
 ## Checks on the checker
 
-- Unit tests in `tests/` give every rule a case that fires it, and most rules a case that does not. `python -m tests.ablate` removes each rule in turn and confirms at least 1 test fails.
+- Unit tests in `tests/` give every rule a case where it fires and a case where it does not. `python -m tests.ablate` removes each rule in turn and confirms at least 1 test fails.
 - The CLI tests cover broken symlinks, a `CLAUDE.md` symlinked to `AGENTS.md`, imports resolved from the importing file, and paths found under a package folder.
 - Stale paths: a random sample of 30 unresolved paths was read by hand. 11 were stale (deleted or moved files, broken links). 19 were build output, placeholders, files in other repos, or files the agent is told to create. Read `n_paths_missing` as "worth a look"; about 1 in 3 flagged paths is confirmed stale.
 - Secret-like strings: every match left after filtering was read with the value masked. None is usable on its own.

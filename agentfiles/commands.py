@@ -38,6 +38,7 @@ class Command:
     text: str
     head: str
     kinds: tuple[str, ...]
+    negated: bool = False
 
 
 def classify(command: str, head: str = "") -> tuple[str, ...]:
@@ -60,11 +61,11 @@ def command_head(line: str) -> str | None:
     return head if head in COMMAND_HEADS or (head.startswith("./") and len(head) > 2) else None
 
 
-def parse_command(raw: str) -> Command | None:
+def parse_command(raw: str, negated: bool = False) -> Command | None:
     """`cd web && pnpm test` counts as a pnpm command: the first real tool in a chain sets the head."""
     heads = (command_head(segment) for segment in SEGMENT_SPLIT_RE.split(raw.strip()))
     head = next((h for h in heads if h and h not in NAVIGATION_HEADS), None)
     if not head:
         return None
     text = re.sub(r"\s+#.*$", "", PROMPT_RE.sub("", raw.strip()))
-    return Command(text, head, classify(text, head))
+    return Command(text, head, classify(text, head), negated)

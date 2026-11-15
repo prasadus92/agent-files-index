@@ -13,6 +13,7 @@ GRAPHQL_URL = "https://api.github.com/graphql"
 USER_AGENT = "agent-files-index"
 GRAPHQL_FLOOR = 200
 REST_FLOOR = 1500  # leaves REST budget for other work sharing the same token
+SYMLINK_MODE = 40960
 
 
 class GatewayTimeout(RuntimeError):
@@ -29,7 +30,6 @@ def token() -> str:
 
 
 def quote(value: str) -> str:
-    """A GraphQL string literal."""
     return json.dumps(value)
 
 

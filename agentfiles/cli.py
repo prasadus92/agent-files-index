@@ -34,18 +34,20 @@ def lint_file(path: Path, repo: LocalRepo) -> list[dict]:
             for f in findings]
 
 
-def collect_targets(args: list[str]) -> tuple[list[Path], list[str]]:
-    targets, problems = [], []
+def collect_targets(args: list[str]) -> tuple[list[tuple[Path, Path]], list[str], bool]:
+    """Each target is paired with the folder to treat as the repo root when there is no .git above it."""
+    targets, problems, missing = [], [], False
     for p in (Path(a).absolute() for a in (args or ["."])):
         if p.is_dir():
-            targets += discover(p)
+            targets += [(f, p) for f in discover(p)]
         elif not p.exists() and not p.is_symlink():
             problems.append(f"{p}: no such file")
+            missing = True
         elif kind_for(p.name) is None:
             problems.append(f"{p}: not an AGENTS.md, CLAUDE.md or SKILL.md file; skipped")
         else:
-            targets.append(p)
-    return targets, problems
+            targets.append((p, p.parent))
+    return targets, problems, missing
 
 
 def print_text(results: list[dict], n_files: int) -> None:
@@ -56,20 +58,20 @@ def print_text(results: list[dict], n_files: int) -> None:
     print(f"\n{n_files} file(s): {counts['error']} error(s), {counts['warning']} warning(s), {counts['info']} info")
 
 
-def exit_code(results: list[dict], strict: bool, unreadable: bool) -> int:
+def exit_code(results: list[dict], strict: bool, input_problem: bool) -> int:
     worst = max((SEVERITY_ORDER[r["severity"]] for r in results), default=-1)
     if worst >= SEVERITY_ORDER["error"] or (strict and worst >= SEVERITY_ORDER["warning"]):
         return 1
-    return 2 if unreadable else 0
+    return 2 if input_problem else 0
 
 
 def run_lint(args: argparse.Namespace) -> int:
-    targets, problems = collect_targets(args.paths)
+    targets, problems, missing = collect_targets(args.paths)
     floor = SEVERITY_ORDER[args.min_severity]
     results, unreadable = [], False
     repos: dict[Path, LocalRepo] = {}
-    for path in targets:
-        root = repo_root(path.parent)
+    for path, fallback in targets:
+        root = repo_root(path.parent, fallback)
         repo = repos.setdefault(root, LocalRepo(root))
         try:
             found = lint_file(path, repo)
@@ -83,11 +85,10 @@ def run_lint(args: argparse.Namespace) -> int:
     if not targets and not problems:
         print("agentfiles: no AGENTS.md, CLAUDE.md or SKILL.md found", file=sys.stderr)
     if args.format == "json":
-        print(json.dumps({"files": [str(t) for t in targets], "findings": results}, indent=2))
+        print(json.dumps({"files": [str(t) for t, _ in targets], "findings": results}, indent=2))
     elif targets:
         print_text(results, len(targets))
-    missing_input = any("no such file" in p for p in problems)
-    return 2 if missing_input and not targets else exit_code(results, args.strict, unreadable)
+    return exit_code(results, args.strict, missing or unreadable)
 
 
 def run_rules() -> int:

@@ -19,12 +19,12 @@ from agentfiles.rules import CLAUDE, SKILL, lint
 from agentfiles.sections import SECTION_CATEGORIES, classify_heading
 
 from . import frame
+from .github import SYMLINK_MODE
 from .store import PathEvidence, RawStore
 
-AGGREGATE_ONLY_RULES = {"AF101", "AF103"}
+AGGREGATE_ONLY_RULES = {"AF101", "AF102", "AF103"}
 MIN_REPOS_PER_HEADING = 5
-UNSAFE_HEADING_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|https?://|www\.", re.I)
-SYMLINK_MODE = 40960
+UNSAFE_HEADING_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|https?://|www\.|\b[\w-]+\.(?:com|io|dev|org|net|ai|app|co|so|sh|me|tech)\b", re.I)
 COMMAND_KINDS = ("test", "lint", "format", "typecheck", "build", "install", "run")
 
 
@@ -120,7 +120,7 @@ class Tables:
             "n_referenced_paths": len(f.referenced_paths),
             "n_paths_checked": sum(1 for p in f.referenced_paths if exists(p) is not None) if exists else None,
             "n_paths_missing": sum(1 for x in found if x.id == "AF401") if exists else None,
-            "n_vague_phrases": f.vague_phrases, "n_home_paths": f.home_paths, "n_pipe_to_shell": f.pipe_shell_hits,
+            "n_vague_phrases": f.vague_phrases, "n_pipe_to_shell": f.pipe_shell_hits,
             **skill_fields(kind, f),
             "similarity_to_agents_md": round(similarity(text, agents_text), 3) if siblings and not row["is_symlink"] else None,
             "agents_md_link": self._agents_md_link(row, text, siblings),
@@ -151,6 +151,8 @@ class Tables:
             self.secret_matches[(*key, name)] += n
         if f.injection_hits:
             self.risky[(*key, "prompt_injection_like")] += 1
+        if f.home_paths:
+            self.risky[(*key, "home_directory_path")] += 1
 
 
 def _public_head(head: str) -> str:

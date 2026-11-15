@@ -1,4 +1,4 @@
-# Agent Files Index: CLAUDE.md, AGENTS.md and SKILL.md files in 38,272 GitHub repos
+# Agent Files Index: CLAUDE.md, AGENTS.md and SKILL.md files in popular GitHub repos
 
 [![test](https://github.com/prasadus92/agent-files-index/actions/workflows/test.yml/badge.svg)](https://github.com/prasadus92/agent-files-index/actions/workflows/test.yml) [![Data: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-blue)](data/LICENSE) [![Code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 
@@ -97,7 +97,7 @@ Options: `--format json`, `--min-severity warning`, and `--strict` to exit 1 on 
 | AF601 | warning | `CLAUDE.md` next to an `AGENTS.md` it never mentions | Claude Code memory docs |
 | AF602 | info | `CLAUDE.md` at least 90% the same as `AGENTS.md` | Index data |
 
-Each rule has a test that fires it and a test that does not, and `python -m tests.ablate` checks that removing any rule makes a test fail.
+Each rule has a test where it fires and a test where it does not, and `python -m tests.ablate` checks that removing any rule makes a test fail.
 
 ## The dataset
 
@@ -107,9 +107,9 @@ Each rule has a test that fires it and a test that does not, and `python -m test
 | `files` | Agent file, with about 80 structural features and lint counts |
 | `headings` | Heading, normalized, with its section categories; the text is kept only for headings shared by 5 or more repos |
 | `commands` | Command a file tells the agent to run: the tool name and its kind |
-| `lint_findings` | Rule a file triggers (the secret and injection rules are excluded) |
+| `lint_findings` | Rule a file triggers (the secret, home-path and injection rules are excluded) |
 | `secret_like_summary` | Pattern, stratum and file kind, counts only |
-| `risky_text_summary` | Signal, stratum and file kind, counts only |
+| `risky_text_summary` | Home-path and injection-like signals by stratum and file kind, counts only |
 
 The tables hold derived features. File text is never published. Each file row carries the repo, commit SHA and blob SHA, so you can open the original on GitHub under its own license.
 

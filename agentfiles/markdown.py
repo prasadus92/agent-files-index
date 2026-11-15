@@ -42,18 +42,8 @@ def classify_lines(lines: Iterable[str]) -> Iterator[Line]:
             yield Line(text, "text")
 
 
-def lines_outside_fences(lines: Iterable[str]) -> list[str]:
-    out, inside = [], False
-    for text in lines:
-        if FENCE_RE.match(text):
-            inside = not inside
-        elif not inside:
-            out.append(text)
-    return out
-
-
 def count_unquoted(rx: re.Pattern, text: str) -> int:
-    """Quoted or backticked text is usually being discussed rather than issued, so it does not count."""
+    """Quoted or backticked text is usually an example under discussion, so it does not count."""
     spans = [m.span() for m in QUOTED_SPAN_RE.finditer(text)]
     return sum(1 for m in rx.finditer(text) if not any(a <= m.start() and m.end() <= b for a, b in spans))
 

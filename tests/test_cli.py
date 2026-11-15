@@ -20,7 +20,7 @@ def run(*args: str) -> tuple[int, dict]:
 class CliTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         (self.root / ".git").mkdir()
 
     def tearDown(self):
@@ -29,7 +29,7 @@ class CliTests(unittest.TestCase):
     def write(self, rel: str, text: str) -> Path:
         path = self.root / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
+        path.write_bytes(text.encode())
         return path
 
     def rules(self, payload: dict, file: str | None = None) -> set[str]:
@@ -71,6 +71,33 @@ class CliTests(unittest.TestCase):
         _, payload = run(str(self.root))
         messages = [f["message"] for f in payload["findings"] if f["rule"] == "AF401"]
         self.assertEqual(messages, ["`src/legacy.ts` not found"])
+
+    def test_dot_claude_symlink_to_root_agents_md(self):
+        self.write("AGENTS.md", "# A\n\n`pnpm test` and `pnpm lint`.\n")
+        (self.root / ".claude").mkdir()
+        (self.root / ".claude" / "CLAUDE.md").symlink_to("../AGENTS.md")
+        _, payload = run(str(self.root))
+        self.assertEqual({f["file"] for f in payload["findings"]} - {"AGENTS.md"}, set())
+
+    def test_crlf_bytes_count_toward_the_32k_limit(self):
+        line = "x" * 98 + "\r\n"
+        self.write("AGENTS.md", "# A\r\n\r\n`pnpm test` and `pnpm lint`.\r\n" + line * 330)
+        self.assertGreater((self.root / "AGENTS.md").stat().st_size, 32 * 1024)
+        _, payload = run(str(self.root))
+        self.assertIn("AF202", self.rules(payload))
+
+    def test_missing_path_argument_exits_2(self):
+        self.write("AGENTS.md", "# A\n\n`pnpm test` and `pnpm lint`.\n")
+        code, _ = run(str(self.root / "AGENTS.md"), str(self.root / "typo" / "AGENTS.md"))
+        self.assertEqual(code, 2)
+
+    def test_folder_without_git_is_the_root(self):
+        (self.root / ".git").rmdir()
+        self.write("src/main.py", "")
+        self.write("sub/AGENTS.md", "# A\n\nSee `src/main.py`.\n`pnpm test` and `pnpm lint`.\n")
+        _, payload = run(str(self.root))
+        self.assertNotIn("AF401", self.rules(payload))
+        self.assertEqual({f["file"] for f in payload["findings"]}, set())
 
     def test_exit_code_on_error(self):
         self.write("AGENTS.md", "# A\n\nkey: AKIAZ7Q2M4N8P3R6T5W1\n`pnpm test` and `pnpm lint`.\n")

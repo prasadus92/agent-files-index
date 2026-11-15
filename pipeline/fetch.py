@@ -10,13 +10,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 
-from .github import GatewayTimeout, graphql, log, quote
+from agentfiles.rules import AGENTS, CLAUDE, SKILL
+
+from .github import SYMLINK_MODE, GatewayTimeout, graphql, log, quote
 from .store import RawStore
 
-ROOT_KINDS = {"agents.md": "agents_md", "claude.md": "claude_md"}
+ROOT_KINDS = {"agents.md": AGENTS, "claude.md": CLAUDE}
 LISTED_SKILL_FOLDERS = {"dotclaude": ".claude/skills", "dotagents": ".agents/skills"}
 MAX_SKILLS_PER_REPO = 50
-SYMLINK_MODE = 40960
 REPOS_PER_QUERY = 8
 LISTINGS_PER_QUERY = 25
 
@@ -67,9 +68,9 @@ def skill_paths(repo: dict, listed: dict[str, list[str]]) -> list[str]:
 def targets_for(repo: dict, skills: list[str]) -> list[Target]:
     out = [Target(e["name"], ROOT_KINDS[e["name"].lower()], e["mode"] == SYMLINK_MODE)
            for e in entries(repo, "root") if e["type"] == "blob" and e["name"].lower() in ROOT_KINDS]
-    out += [Target(f".claude/{e['name']}", "claude_md", e["mode"] == SYMLINK_MODE)
+    out += [Target(f".claude/{e['name']}", CLAUDE, e["mode"] == SYMLINK_MODE)
             for e in entries(repo, "dotclaude") if e["type"] == "blob" and e["name"].lower() == "claude.md"]
-    out += [Target(p, "skill_md", with_history=False) for p in skills[:MAX_SKILLS_PER_REPO]]
+    out += [Target(p, SKILL, with_history=False) for p in skills[:MAX_SKILLS_PER_REPO]]
     return out
 
 

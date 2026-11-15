@@ -42,7 +42,7 @@ A CLAUDE.md file or AGENTS.md file is a Markdown file in a repo that a coding ag
 
 ## Who made it and why
 
-Prasad Subrahmanya ([prasad.tech](https://prasad.tech)) built it to answer practical questions about these files with counts instead of opinions: how long they are, what sections they have, whether they tell the agent how to run the tests, and how often they point at files that no longer exist. The same extractor powers the `agentfiles` checker in this repo.
+Prasad Subrahmanya ([prasad.tech](https://prasad.tech)) built it to answer practical questions about these files with counts: how long they are, what sections they have, whether they tell the agent how to run the tests, and how often they point at files that no longer exist. The same extractor powers the `agentfiles` checker in this repo.
 
 ## Sampling frame
 
@@ -59,9 +59,9 @@ Full method, including the reason for repository search over code search: [`../d
 | `files` | 1 per agent file | Size, structure, commands, rule words, references, maintenance and lint counts |
 | `headings` | 1 per heading | Level and section categories, and the normalized text when 5 or more repos share it and it holds no email address, URL or home path |
 | `commands` | 1 per command | The tool (`pnpm`, `pytest`, or `./*` for a local script) and its kind; full command lines stay private |
-| `lint_findings` | 1 per rule hit | Rule id and severity per file; secret and injection rules are excluded |
+| `lint_findings` | 1 per rule hit | Rule id and severity per file; the secret, home-path and injection rules are excluded |
 | `secret_like_summary` | 1 per pattern, stratum and kind | Files matching the raw pattern and files left after filtering; no repo names |
-| `risky_text_summary` | 1 per signal, stratum and kind | Counts only, no repo names |
+| `risky_text_summary` | 1 per signal, stratum and kind | Files with home-directory paths or injection-like text; counts only, no repo names |
 | `summary.json` | | The headline numbers in the README and the post |
 
 Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. Every table has a `snapshot` column.
@@ -87,7 +87,7 @@ Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. E
 | `skill_*` | Skill frontmatter: present, `name` and `description` lengths, `allowed-tools` present, body length |
 | `similarity_to_agents_md` | For a `CLAUDE.md` next to an `AGENTS.md`: Jaccard similarity of their non-blank lines |
 | `agents_md_link` | For a `CLAUDE.md` next to an `AGENTS.md`: `symlink`, `import`, `mention` or `none` |
-| `lint_errors`, `lint_warnings`, `lint_info`, `lint_rules` | `agentfiles` results, excluding AF101 (secrets) and AF103 (injection-like text) |
+| `lint_errors`, `lint_warnings`, `lint_info`, `lint_rules` | `agentfiles` results, excluding AF101 (secrets), AF102 (home-directory paths) and AF103 (injection-like text) |
 
 ### Key columns in `repos`
 

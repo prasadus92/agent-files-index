@@ -19,8 +19,9 @@ def discover(root: Path) -> list[Path]:
     return sorted(found)
 
 
-def repo_root(start: Path) -> Path:
-    return next((p for p in [start, *start.parents] if (p / ".git").exists()), start)
+def repo_root(start: Path, fallback: Path) -> Path:
+    """The nearest folder with a .git entry, else the folder the user asked to lint."""
+    return next((p for p in [start, *start.parents] if (p / ".git").exists()), fallback)
 
 
 class LocalRepo:
@@ -51,19 +52,23 @@ class LocalRepo:
         return (self.root / Path(file_path).parent / imp).exists()
 
     def siblings(self, path: Path, kind: str) -> dict[str, str]:
-        if kind != CLAUDE:
-            return {}
-        folder = path.parent.parent if path.parent.name == ".claude" else path.parent
-        agents = folder / "AGENTS.md"
-        return {"agents.md": read_text(agents)} if agents.is_file() else {}
+        agents = agents_md_beside(path)
+        return {"agents.md": read_text(agents)} if kind == CLAUDE and agents.is_file() else {}
+
+
+def agents_md_beside(path: Path) -> Path:
+    """The AGENTS.md a CLAUDE.md pairs with; for .claude/CLAUDE.md that is the one in the repo folder above."""
+    folder = path.parent.parent if path.parent.name == ".claude" else path.parent
+    return folder.resolve() / "AGENTS.md"
 
 
 def read_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8-sig", errors="replace")
+    """Decode from bytes so CRLF line endings survive and byte counts match the file on disk."""
+    return path.read_bytes().decode("utf-8-sig", errors="replace")
 
 
 def is_link_to_sibling_agents_md(path: Path) -> bool:
-    if not path.is_symlink() or path.name.lower() == "agents.md":
+    if not path.is_symlink() or kind_for(path.name) != CLAUDE:
         return False
     target = path.resolve()
-    return target.is_file() and target == path.parent.resolve() / "AGENTS.md"
+    return target.is_file() and target == agents_md_beside(path)

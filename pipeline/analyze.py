@@ -159,7 +159,6 @@ def main() -> None:
             "after_filters_by_pattern": secret_summary.groupby("pattern").files_after_filters.sum().loc[lambda s: s > 0].to_dict(),
         },
         "risky_text_files": risky.groupby("signal").files.sum().to_dict() if len(risky) else {},
-        "home_path_files": int((real.n_home_paths > 0).sum()),
         "pipe_to_shell_files": int((real.n_pipe_to_shell > 0).sum()),
     }
     (data / "summary.json").write_text(json.dumps(summary, indent=2, default=float))

@@ -1,4 +1,0 @@
-snapshot,stratum,kind,signal,files
-2026-11-15,A,claude_md,prompt_injection_like,1
-2026-11-15,A,skill_md,prompt_injection_like,2
-2026-11-15,B,agents_md,prompt_injection_like,1

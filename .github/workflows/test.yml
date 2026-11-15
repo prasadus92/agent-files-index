@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.10", "3.13"]
+        python: ["3.11", "3.14"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: ${{ matrix.python }}
       - name: Unit tests
         run: python -m unittest discover -s tests -t . -v
       - name: Every rule has a failing test without it
-        run: python scripts/ablate.py
+        run: python -m tests.ablate
       - name: Lint this repo's own agent files
         run: python -m agentfiles lint . --min-severity warning

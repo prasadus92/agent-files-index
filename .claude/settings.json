@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m unittest:*)",
+      "Bash(python -m tests.ablate)",
+      "Bash(python -m agentfiles:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run python -m unittest:*)",
+      "Bash(uv run python -m tests.ablate)",
+      "Bash(git status)",
+      "Bash(git diff:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(git push --force:*)"
+    ]
+  }
+}

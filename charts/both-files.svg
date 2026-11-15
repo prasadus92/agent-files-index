@@ -1,16 +1,16 @@
-<svg viewBox="0 0 640 190" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-<text class="tk" x="0" y="20">What CLAUDE.md does with AGENTS.md (3,285 repos with both)</text>
+<svg viewBox="0 0 720 190" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<text class="tk" x="0" y="20">What CLAUDE.md does with AGENTS.md (2,968 repos with both)</text>
 <text class="t" x="0" y="54" style="font-size:13.5px">Symlink to AGENTS.md</text>
-<rect class="box-accent" x="230" y="40" width="201.2" height="18" rx="2"/>
-<text class="ts" x="439.2" y="54">24.2%</text>
+<rect class="box-accent" x="220" y="40" width="146.8" height="18" rx="2"/>
+<text class="ts" x="374.8" y="54">24.6%</text>
 <text class="t" x="0" y="84" style="font-size:13.5px">Imports it with @AGENTS.md</text>
-<rect class="box-accent" x="230" y="70" width="314.3" height="18" rx="2"/>
-<text class="ts" x="552.3" y="84">37.8%</text>
+<rect class="box-accent" x="220" y="70" width="228.6" height="18" rx="2"/>
+<text class="ts" x="456.6" y="84">38.3%</text>
 <text class="t" x="0" y="114" style="font-size:13.5px">Mentions it in the text</text>
-<rect class="box-accent" x="230" y="100" width="136.4" height="18" rx="2"/>
-<text class="ts" x="374.4" y="114">16.4%</text>
+<rect class="box-accent" x="220" y="100" width="96.1" height="18" rx="2"/>
+<text class="ts" x="324.1" y="114">16.1%</text>
 <text class="t" x="0" y="144" style="font-size:13.5px">Never mentions it</text>
-<rect class="box-accent" x="230" y="130" width="172.1" height="18" rx="2"/>
-<text class="ts" x="410.1" y="144">20.7%</text>
+<rect class="box-accent" x="220" y="130" width="120.0" height="18" rx="2"/>
+<text class="ts" x="348.0" y="144">20.1%</text>
 <text class="tn" x="0" y="182">Claude Code reads AGENTS.md only when no CLAUDE.md exists.</text>
 </svg>

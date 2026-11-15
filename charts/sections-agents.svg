@@ -1,40 +1,40 @@
-<svg viewBox="0 0 640 430" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 720 430" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
 <text class="tk" x="0" y="20">Sections found in AGENTS.md files</text>
 <text class="t" x="0" y="54" style="font-size:13.5px">agent workflow</text>
-<rect class="box-accent" x="230" y="40" width="314.3" height="18" rx="2"/>
-<text class="ts" x="552.3" y="54">75.5%</text>
-<text class="t" x="0" y="84" style="font-size:13.5px">testing</text>
-<rect class="box-accent" x="230" y="70" width="210.6" height="18" rx="2"/>
-<text class="ts" x="448.6" y="84">50.6%</text>
-<text class="t" x="0" y="114" style="font-size:13.5px">code style</text>
-<rect class="box-accent" x="230" y="100" width="209.4" height="18" rx="2"/>
-<text class="ts" x="447.4" y="114">50.3%</text>
+<rect class="box-accent" x="220" y="40" width="228.6" height="18" rx="2"/>
+<text class="ts" x="456.6" y="54">75.7%</text>
+<text class="t" x="0" y="84" style="font-size:13.5px">code style</text>
+<rect class="box-accent" x="220" y="70" width="155.2" height="18" rx="2"/>
+<text class="ts" x="383.2" y="84">51.4%</text>
+<text class="t" x="0" y="114" style="font-size:13.5px">testing</text>
+<rect class="box-accent" x="220" y="100" width="154.6" height="18" rx="2"/>
+<text class="ts" x="382.6" y="114">51.2%</text>
 <text class="t" x="0" y="144" style="font-size:13.5px">architecture</text>
-<rect class="box-accent" x="230" y="130" width="207.7" height="18" rx="2"/>
-<text class="ts" x="445.7" y="144">49.9%</text>
+<rect class="box-accent" x="220" y="130" width="151.3" height="18" rx="2"/>
+<text class="ts" x="379.3" y="144">50.1%</text>
 <text class="t" x="0" y="174" style="font-size:13.5px">git pr</text>
-<rect class="box-accent" x="230" y="160" width="201.1" height="18" rx="2"/>
-<text class="ts" x="439.1" y="174">48.3%</text>
+<rect class="box-accent" x="220" y="160" width="148.3" height="18" rx="2"/>
+<text class="ts" x="376.3" y="174">49.1%</text>
 <text class="t" x="0" y="204" style="font-size:13.5px">commands</text>
-<rect class="box-accent" x="230" y="190" width="190.7" height="18" rx="2"/>
-<text class="ts" x="428.7" y="204">45.8%</text>
+<rect class="box-accent" x="220" y="190" width="139.2" height="18" rx="2"/>
+<text class="ts" x="367.2" y="204">46.1%</text>
 <text class="t" x="0" y="234" style="font-size:13.5px">boundaries</text>
-<rect class="box-accent" x="230" y="220" width="149.0" height="18" rx="2"/>
-<text class="ts" x="387.0" y="234">35.8%</text>
+<rect class="box-accent" x="220" y="220" width="108.4" height="18" rx="2"/>
+<text class="ts" x="336.4" y="234">35.9%</text>
 <text class="t" x="0" y="264" style="font-size:13.5px">build</text>
-<rect class="box-accent" x="230" y="250" width="111.1" height="18" rx="2"/>
-<text class="ts" x="349.1" y="264">26.7%</text>
-<text class="t" x="0" y="294" style="font-size:13.5px">overview</text>
-<rect class="box-accent" x="230" y="280" width="94.9" height="18" rx="2"/>
-<text class="ts" x="332.9" y="294">22.8%</text>
-<text class="t" x="0" y="324" style="font-size:13.5px">documentation</text>
-<rect class="box-accent" x="230" y="310" width="94.9" height="18" rx="2"/>
-<text class="ts" x="332.9" y="324">22.8%</text>
+<rect class="box-accent" x="220" y="250" width="81.8" height="18" rx="2"/>
+<text class="ts" x="309.8" y="264">27.1%</text>
+<text class="t" x="0" y="294" style="font-size:13.5px">documentation</text>
+<rect class="box-accent" x="220" y="280" width="70.1" height="18" rx="2"/>
+<text class="ts" x="298.1" y="294">23.2%</text>
+<text class="t" x="0" y="324" style="font-size:13.5px">overview</text>
+<rect class="box-accent" x="220" y="310" width="69.4" height="18" rx="2"/>
+<text class="ts" x="297.4" y="324">23.0%</text>
 <text class="t" x="0" y="354" style="font-size:13.5px">setup</text>
-<rect class="box-accent" x="230" y="340" width="80.8" height="18" rx="2"/>
-<text class="ts" x="318.8" y="354">19.4%</text>
+<rect class="box-accent" x="220" y="340" width="60.1" height="18" rx="2"/>
+<text class="ts" x="288.1" y="354">19.9%</text>
 <text class="t" x="0" y="384" style="font-size:13.5px">lint format</text>
-<rect class="box-accent" x="230" y="370" width="58.7" height="18" rx="2"/>
-<text class="ts" x="296.7" y="384">14.1%</text>
-<text class="tn" x="0" y="422">7,257 AGENTS.md files; headings matched to 17 categories.</text>
+<rect class="box-accent" x="220" y="370" width="43.2" height="18" rx="2"/>
+<text class="ts" x="271.2" y="384">14.3%</text>
+<text class="tn" x="0" y="422">Files in the census of repos with 1,000+ stars; headings matched to 17 categories.</text>
 </svg>

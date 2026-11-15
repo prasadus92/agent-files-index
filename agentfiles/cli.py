@@ -4,79 +4,96 @@ Usage:
   agentfiles lint [PATH ...] [--format text|json] [--min-severity info|warning|error] [--strict]
   agentfiles rules
 
-With no PATH, it finds agent files in the current repo: AGENTS.md and CLAUDE.md at any depth,
-.claude/CLAUDE.md, and SKILL.md under skills folders. Exit code 1 means an error was found
-(or a warning, with --strict).
+With no PATH it lints the current folder: AGENTS.md and CLAUDE.md at any depth and SKILL.md files.
+Exit code 1 means an error was found (or a warning, with --strict); 2 means a file could not be read.
 """
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
 from . import __version__
+from .discover import LocalRepo, discover, is_link_to_sibling_agents_md, read_text, repo_root
 from .rules import RULES, SEVERITY_ORDER, kind_for, lint
 
-SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "vendor", "dist", "build", "target", "__pycache__", ".next", ".tox"}
 
-
-def discover(root: Path) -> list[Path]:
-    found = []
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
-        for name in filenames:
-            if kind_for(name):
-                found.append(Path(dirpath) / name)
-    return sorted(found)
-
-
-_TREES: dict[Path, list[str]] = {}
-
-
-def tree_paths(root: Path) -> list[str]:
-    """Every file and folder path under root, so a path written relative to a package folder still resolves."""
-    if root not in _TREES:
-        paths = []
-        for dirpath, dirnames, filenames in os.walk(root):
-            dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
-            rel = Path(dirpath).relative_to(root).as_posix()
-            prefix = "" if rel == "." else rel + "/"
-            paths.extend(prefix + n for n in dirnames + filenames)
-        _TREES[root] = ["/" + p for p in paths]
-    return _TREES[root]
-
-
-def repo_root(start: Path) -> Path:
-    for p in [start, *start.parents]:
-        if (p / ".git").exists():
-            return p
-    return start
-
-
-def lint_file(path: Path, root: Path) -> list[dict]:
-    text = path.read_text(encoding="utf-8", errors="replace")
+def lint_file(path: Path, repo: LocalRepo) -> list[dict]:
     kind = kind_for(path.name)
-    folder = path.parent
+    if is_link_to_sibling_agents_md(path):
+        return []
+    rel = repo.relative(path)
+    findings = lint(
+        read_text(path), kind, rel,
+        exists=lambda ref: repo.reference_exists(ref, rel),
+        import_exists=lambda imp: repo.import_exists(imp, rel),
+        siblings=repo.siblings(path, kind),
+    )
+    return [{"file": rel, "rule": f.id, "severity": f.severity, "title": f.rule.title, "message": f.message, "line": f.line}
+            for f in findings]
 
-    def exists(rel: str) -> bool:
-        rel = rel.split("?")[0].split("#")[0].rstrip("/")
-        if any((base / rel).exists() for base in (root, folder)):
-            return True
-        suffix = "/" + rel.lstrip("./")
-        return any(t.endswith(suffix) for t in tree_paths(root))
 
-    siblings = {}
-    if kind == "claude_md":
-        for cand in (folder / "AGENTS.md", folder.parent / "AGENTS.md" if folder.name == ".claude" else None):
-            if cand and cand.exists():
-                siblings["agents.md"] = cand.read_text(encoding="utf-8", errors="replace")
-    rel = path.relative_to(root) if path.is_relative_to(root) else path
-    return [
-        {"file": str(rel), "rule": f.rule, "severity": f.severity, "title": f.title, "message": f.message, "line": f.line}
-        for f in lint(text, kind, str(rel), exists=exists, siblings=siblings)
-    ]
+def collect_targets(args: list[str]) -> tuple[list[Path], list[str]]:
+    targets, problems = [], []
+    for p in (Path(a).absolute() for a in (args or ["."])):
+        if p.is_dir():
+            targets += discover(p)
+        elif not p.exists() and not p.is_symlink():
+            problems.append(f"{p}: no such file")
+        elif kind_for(p.name) is None:
+            problems.append(f"{p}: not an AGENTS.md, CLAUDE.md or SKILL.md file; skipped")
+        else:
+            targets.append(p)
+    return targets, problems
+
+
+def print_text(results: list[dict], n_files: int) -> None:
+    for r in results:
+        loc = f"{r['file']}:{r['line']}" if r["line"] else r["file"]
+        print(f"{loc}: {r['severity']} {r['rule']} {r['title']}: {r['message']}")
+    counts = {s: sum(1 for r in results if r["severity"] == s) for s in ("error", "warning", "info")}
+    print(f"\n{n_files} file(s): {counts['error']} error(s), {counts['warning']} warning(s), {counts['info']} info")
+
+
+def exit_code(results: list[dict], strict: bool, unreadable: bool) -> int:
+    worst = max((SEVERITY_ORDER[r["severity"]] for r in results), default=-1)
+    if worst >= SEVERITY_ORDER["error"] or (strict and worst >= SEVERITY_ORDER["warning"]):
+        return 1
+    return 2 if unreadable else 0
+
+
+def run_lint(args: argparse.Namespace) -> int:
+    targets, problems = collect_targets(args.paths)
+    floor = SEVERITY_ORDER[args.min_severity]
+    results, unreadable = [], False
+    repos: dict[Path, LocalRepo] = {}
+    for path in targets:
+        root = repo_root(path.parent)
+        repo = repos.setdefault(root, LocalRepo(root))
+        try:
+            found = lint_file(path, repo)
+        except OSError as e:
+            problems.append(f"{path}: cannot read ({e.strerror or e})")
+            unreadable = True
+            continue
+        results += [r for r in found if SEVERITY_ORDER[r["severity"]] >= floor]
+    for msg in problems:
+        print(f"agentfiles: {msg}", file=sys.stderr)
+    if not targets and not problems:
+        print("agentfiles: no AGENTS.md, CLAUDE.md or SKILL.md found", file=sys.stderr)
+    if args.format == "json":
+        print(json.dumps({"files": [str(t) for t in targets], "findings": results}, indent=2))
+    elif targets:
+        print_text(results, len(targets))
+    missing_input = any("no such file" in p for p in problems)
+    return 2 if missing_input and not targets else exit_code(results, args.strict, unreadable)
+
+
+def run_rules() -> int:
+    for r in RULES.values():
+        print(f"{r.id}  {r.severity:<7}  {r.title}\n         {r.source}")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -90,42 +107,7 @@ def main(argv: list[str] | None = None) -> int:
     lp.add_argument("--strict", action="store_true", help="exit 1 on warnings too")
     sub.add_parser("rules", help="list rules and their sources")
     args = ap.parse_args(argv)
-
-    if args.cmd == "rules":
-        for rid, (sev, title, source) in RULES.items():
-            print(f"{rid}  {sev:<7}  {title}\n         {source}")
-        return 0
-
-    targets: list[Path] = []
-    for p in [Path(x) for x in (args.paths or ["."])]:
-        if p.is_dir():
-            targets.extend(discover(p))
-        elif p.exists():
-            targets.append(p)
-        else:
-            print(f"agentfiles: {p}: no such file", file=sys.stderr)
-            return 2
-    if not targets:
-        print("agentfiles: no AGENTS.md, CLAUDE.md or SKILL.md found", file=sys.stderr)
-        return 0
-
-    floor = SEVERITY_ORDER[args.min_severity]
-    results = []
-    for t in targets:
-        t = t.resolve()
-        results.extend(r for r in lint_file(t, repo_root(t.parent)) if SEVERITY_ORDER[r["severity"]] >= floor)
-
-    if args.format == "json":
-        print(json.dumps({"files": [str(t) for t in targets], "findings": results}, indent=2))
-    else:
-        for r in results:
-            loc = f"{r['file']}:{r['line']}" if r["line"] else r["file"]
-            print(f"{loc}: {r['severity']} {r['rule']} {r['title']}: {r['message']}")
-        counts = {s: sum(1 for r in results if r["severity"] == s) for s in ("error", "warning", "info")}
-        print(f"\n{len(targets)} file(s): {counts['error']} error(s), {counts['warning']} warning(s), {counts['info']} info")
-
-    worst = max((SEVERITY_ORDER[r["severity"]] for r in results), default=-1)
-    return 1 if worst >= SEVERITY_ORDER["error"] or (args.strict and worst >= SEVERITY_ORDER["warning"]) else 0
+    return run_rules() if args.cmd == "rules" else run_lint(args)
 
 
 if __name__ == "__main__":

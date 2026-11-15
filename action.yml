@@ -16,15 +16,13 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
     - shell: bash
       env:
         AF_PATH: ${{ inputs.path }}
         AF_MIN: ${{ inputs.min-severity }}
         AF_STRICT: ${{ inputs.strict }}
+        PYTHONPATH: ${{ github.action_path }}
       run: |
         args=(lint "$AF_PATH" --min-severity "$AF_MIN")
         if [ "$AF_STRICT" = "true" ]; then args+=(--strict); fi
-        PYTHONPATH="${{ github.action_path }}" python -m agentfiles "${args[@]}"
+        python3 -m agentfiles "${args[@]}"

@@ -1,25 +1,25 @@
-<svg viewBox="0 0 640 280" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 720 280" role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
 <text class="tk" x="0" y="20">Which agent files repos ship (1,000+ stars)</text>
 <text class="t" x="0" y="54" style="font-size:13.5px">AGENTS.md</text>
-<rect class="box-accent" x="230" y="40" width="314.3" height="18" rx="2"/>
-<text class="ts" x="552.3" y="54">17.3% (100 to 999 stars: 10.9%)</text>
+<rect class="box-accent" x="220" y="40" width="228.6" height="18" rx="2"/>
+<text class="ts" x="456.6" y="54">17.3% (100 to 999 stars: 10.9%)</text>
 <text class="t" x="0" y="84" style="font-size:13.5px">CLAUDE.md</text>
-<rect class="box-accent" x="230" y="70" width="218.0" height="18" rx="2"/>
-<text class="ts" x="456.0" y="84">12.0% (100 to 999 stars: 8.3%)</text>
+<rect class="box-accent" x="220" y="70" width="158.5" height="18" rx="2"/>
+<text class="ts" x="386.5" y="84">12.0% (100 to 999 stars: 8.3%)</text>
 <text class="t" x="0" y="114" style="font-size:13.5px">SKILL.md (skills folder)</text>
-<rect class="box-accent" x="230" y="100" width="174.4" height="18" rx="2"/>
-<text class="ts" x="412.4" y="114">9.6% (100 to 999 stars: 5.7%)</text>
+<rect class="box-accent" x="220" y="100" width="126.8" height="18" rx="2"/>
+<text class="ts" x="354.8" y="114">9.6% (100 to 999 stars: 5.7%)</text>
 <text class="t" x="0" y="144" style="font-size:13.5px">Copilot instructions</text>
-<rect class="box-accent" x="230" y="130" width="63.6" height="18" rx="2"/>
-<text class="ts" x="301.6" y="144">3.5% (100 to 999 stars: 1.5%)</text>
+<rect class="box-accent" x="220" y="130" width="46.2" height="18" rx="2"/>
+<text class="ts" x="274.2" y="144">3.5% (100 to 999 stars: 1.5%)</text>
 <text class="t" x="0" y="174" style="font-size:13.5px">Cursor rules</text>
-<rect class="box-accent" x="230" y="160" width="25.4" height="18" rx="2"/>
-<text class="ts" x="263.4" y="174">1.4% (100 to 999 stars: 0.8%)</text>
+<rect class="box-accent" x="220" y="160" width="18.5" height="18" rx="2"/>
+<text class="ts" x="246.5" y="174">1.4% (100 to 999 stars: 0.8%)</text>
 <text class="t" x="0" y="204" style="font-size:13.5px">GEMINI.md</text>
-<rect class="box-accent" x="230" y="190" width="10.9" height="18" rx="2"/>
-<text class="ts" x="248.9" y="204">0.6% (100 to 999 stars: 0.4%)</text>
+<rect class="box-accent" x="220" y="190" width="7.9" height="18" rx="2"/>
+<text class="ts" x="235.9" y="204">0.6% (100 to 999 stars: 0.4%)</text>
 <text class="t" x="0" y="234" style="font-size:13.5px">.mcp.json</text>
-<rect class="box-accent" x="230" y="220" width="16.4" height="18" rx="2"/>
-<text class="ts" x="254.4" y="234">0.9% (100 to 999 stars: 0.7%)</text>
+<rect class="box-accent" x="220" y="220" width="11.9" height="18" rx="2"/>
+<text class="ts" x="239.9" y="234">0.9% (100 to 999 stars: 0.7%)</text>
 <text class="tn" x="0" y="272">38,272 repos with 1,000+ stars; 7,912 sampled repos with 100 to 999.</text>
 </svg>

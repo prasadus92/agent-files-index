@@ -87,6 +87,7 @@ Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. E
 | `skill_*` | Skill frontmatter: present, `name` and `description` lengths, `allowed-tools` present, body length |
 | `similarity_to_agents_md` | For a `CLAUDE.md` next to an `AGENTS.md`: Jaccard similarity of their non-blank lines |
 | `agents_md_link` | For a `CLAUDE.md` next to an `AGENTS.md`: `symlink`, `import`, `mention` or `none` |
+| `has_init_line` | For a `CLAUDE.md`: it contains "This file provides guidance to Claude Code", the sentence Claude Code's `/init` command opens the file with. Text pasted from another `/init` file matches too. Empty for symlinks and other kinds |
 | `lint_errors`, `lint_warnings`, `lint_info`, `lint_rules` | `agentfiles` results, excluding AF101 (secrets), AF102 (home-directory paths) and AF103 (injection-like text) |
 
 ### Key columns in `repos`
@@ -102,7 +103,7 @@ Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. E
 ## Known biases and limits
 
 - Stars measure attention. The frame over-represents AI tooling repos.
-- The census ran over about an hour; star counts and pushes moved during it.
+- The census took about 35 minutes to list; star counts and pushes moved during it.
 - Section categories and command kinds come from keyword rules and miss unusual wording.
 - A path found nowhere in the tree may still be fine: a build output, a submodule, or a file the agent is meant to create. Placeholders and common build folders are excluded before counting, and a hand check found about 1 in 3 flagged paths stale.
 - Secret-like matches are an upper bound. Placeholders, local dev credentials and low-entropy values are filtered; what is left can still be a revoked key or a test fixture.

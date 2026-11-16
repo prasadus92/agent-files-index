@@ -63,6 +63,19 @@ def adoption(repos: pd.DataFrame) -> dict:
     }
 
 
+def init_line_stats(df: pd.DataFrame) -> dict:
+    df = df[df.has_init_line.notna()]
+    if df.empty:
+        return {}
+    df = df.assign(init=df.has_init_line.astype(bool), single=df.n_commits == 1)
+    return {
+        "init_line": share(df, "init"),
+        "single_commit_with_init_line": share(df[df.init], "single"),
+        "single_commit_without_init_line": share(df[~df.init], "single"),
+        "init_line_among_single_commit": share(df[df.single], "init"),
+    }
+
+
 def describe(df: pd.DataFrame) -> dict:
     if df.empty:
         return {}
@@ -77,6 +90,7 @@ def describe(df: pd.DataFrame) -> dict:
     if df.n_commits.notna().any():
         out["single_commit"] = pct((df.n_commits == 1).mean())
         out["commits_median"] = float(df.n_commits.median())
+        out.update(init_line_stats(df))
     checked = df[df.n_paths_checked.fillna(0) > 0]
     if not checked.empty:
         out["files_with_checked_paths"] = len(checked)

@@ -59,6 +59,18 @@ class OptOutListTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 opt_out.repo_id(Path(d), "missing/repo")
 
+    def test_added_entry_survives_a_missing_final_newline_and_is_not_repeated(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "opt_out.txt"
+            path.write_text("# header")
+            opt_out.add(opt_out.digest(42), path)
+            opt_out.add(opt_out.digest(42), path)
+            self.assertEqual(opt_out.load(path), {opt_out.digest(42)})
+            self.assertEqual(path.read_text().count(opt_out.digest(42)), 1)
+
+    def test_numeric_argument_is_taken_as_the_id(self):
+        self.assertEqual(opt_out.repo_id(Path("unused"), "42"), 42)
+
 
 AGENTS_TEXT = "# Testing\n\nRun `pytest` before you push.\n\nNotes live in /Users/alice/notes.\n"
 

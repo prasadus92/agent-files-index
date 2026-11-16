@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from . import frame
-from .github import GatewayTimeout, graphql, log
+from .github import MAX_WORKERS, GatewayTimeout, graphql, log
 from .store import RawStore
 
 SEARCH_CAP = 1000
@@ -92,7 +92,7 @@ def run(store: RawStore, stratum: str, slices: list[tuple[str, int]], reverse: b
     done = store.checkpoint(f"repos_{stratum}.done")
     todo = [s for s in slices if s[0] not in done][:: -1 if reverse else 1]
     log(f"stratum {stratum}: {len(todo)} of {len(slices)} slices to do")
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         futures = {pool.submit(fetch_slice, q): q for q, _ in todo}
         for i, fut in enumerate(as_completed(futures), 1):
             q = futures[fut]

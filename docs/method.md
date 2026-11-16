@@ -58,7 +58,7 @@ The `@import` rule (AF402) runs in the checker, which can see the local file sys
 
 ## Headings published
 
-A heading's text is published only when at least 5 repos use the same normalized heading and it contains no email address, URL, domain name (such as `example.com`) or home-directory path. Every other heading keeps its level and categories with the text left blank. This keeps the table useful for "which sections do files have" without turning it into a copy of file text.
+A heading's text is published only when it has 8 words or fewer, at least 5 repos use the same normalized heading, and it contains no email address, URL, domain name (such as `example.com`) or home-directory path. Every other heading keeps its level and categories with the text left blank. This keeps the table useful for "which sections do files have" without turning it into a copy of file text.
 
 ## Secret-like strings
 
@@ -73,7 +73,6 @@ Matched values never enter a derived file. The published tables hold counts by p
 - Stale paths: a random sample of 30 unresolved paths was read by hand. 11 were stale (deleted or moved files, broken links). 19 were build output, placeholders, files in other repos, or files the agent is told to create. Read `n_paths_missing` as "worth a look"; about 1 in 3 flagged paths is confirmed stale.
 - Secret-like strings: every match left after filtering was read with the value masked. None is usable on its own.
 - Prompt-injection-like text: 20 hits from an earlier, broader rule were read by hand. Most were harmless lines such as "never tell the user to restart", so version 1 counts only override phrases ("ignore all previous instructions") and explicit concealment, outside code blocks and quotes.
-- An independent review of the code and data before the first release found a heading-text leak, command-kind errors and several checker bugs. All are fixed in this version and covered by tests.
 
 ## Known biases
 

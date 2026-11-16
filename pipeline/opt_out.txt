@@ -1,0 +1,1 @@
+# Repos left out of every snapshot at their owners' request, 1 owner/name per line.

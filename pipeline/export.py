@@ -5,7 +5,6 @@ Usage: python -m pipeline.export RAW_DIR OUT_DIR
 from __future__ import annotations
 
 import re
-import sys
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -18,14 +17,16 @@ from agentfiles.relations import agents_md_link, similarity
 from agentfiles.rules import CLAUDE, SKILL, lint
 from agentfiles.sections import SECTION_CATEGORIES, classify_heading
 
-from . import frame
+from . import frame, paths_from_argv
 from .github import SYMLINK_MODE
 from .store import PathEvidence, RawStore
 
 AGGREGATE_ONLY_RULES = {"AF101", "AF102", "AF103"}
 MIN_REPOS_PER_HEADING = 5
+MAX_HEADING_WORDS = 8
+OPT_OUT_FILE = Path(__file__).with_name("opt_out.txt")
 UNSAFE_HEADING_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|https?://|www\.|\b[\w-]+\.(?:com|io|dev|org|net|ai|app|co|so|sh|me|tech)\b", re.I)
-COMMAND_KINDS = ("test", "lint", "format", "typecheck", "build", "install", "run")
+COMMAND_KINDS = (*(kind for kind, _ in commands.KIND_PATTERNS), "run")
 
 
 def names(entries: list[dict] | None, entry_type: str | None = None) -> set[str]:
@@ -160,12 +161,25 @@ def _public_head(head: str) -> str:
     return "./*" if head.startswith("./") and head not in commands.COMMAND_HEADS else head
 
 
+def opted_out(path: Path = OPT_OUT_FILE) -> set[str]:
+    """Repos whose owners asked to leave the dataset, 1 owner/name per line."""
+    if not path.exists():
+        return set()
+    lines = (line.split("#", 1)[0].strip().lower() for line in path.read_text().splitlines())
+    return {line for line in lines if line}
+
+
+def without_opted_out(repos: dict[str, dict], excluded: set[str]) -> dict[str, dict]:
+    return {name: r for name, r in repos.items() if name.lower() not in excluded}
+
+
 def publishable_headings(headings: pd.DataFrame) -> pd.DataFrame:
-    """Keep heading text only when at least 5 repos share it and it holds no address, URL or home path."""
+    """Keep heading text only when it is a short phrase shared by 5+ repos with no address, URL or home path."""
     repos_per_heading = headings.groupby("heading").repo.nunique()
     common = headings.heading.map(repos_per_heading) >= MIN_REPOS_PER_HEADING
+    short = headings.heading.str.split().str.len() <= MAX_HEADING_WORDS
     unsafe = headings.heading.str.contains(UNSAFE_HEADING_RE) | headings.heading.str.contains(HOME_PATH_RE.pattern, case=False)
-    return headings.assign(heading=headings.heading.where(common & ~unsafe, ""))
+    return headings.assign(heading=headings.heading.where(common & short & ~unsafe, ""))
 
 
 def private_summaries(t: Tables) -> dict[str, pd.DataFrame]:
@@ -188,9 +202,10 @@ def write(out: Path, name: str, df: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    store, out = RawStore(Path(sys.argv[1])), Path(sys.argv[2])
+    raw, out = paths_from_argv("RAW_DIR", "OUT_DIR")
+    store = RawStore(raw)
     out.mkdir(parents=True, exist_ok=True)
-    repos = store.repos()
+    repos = without_opted_out(store.repos(), opted_out())
     evidence = PathEvidence(store)
     files = [row for row in store.files() if row["repo"] in repos]
     texts = {(r["repo"], r["path"].lower()): r["text"] or "" for r in files}

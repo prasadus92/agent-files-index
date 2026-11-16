@@ -5,17 +5,16 @@ Usage: python -m pipeline.fetch RAW_DIR
 """
 from __future__ import annotations
 
-import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from pathlib import Path
 
-from agentfiles.rules import AGENTS, CLAUDE, SKILL
+from agentfiles.rules import CLAUDE, KIND_BY_NAME, SKILL
 
-from .github import SYMLINK_MODE, GatewayTimeout, graphql, log, quote
+from . import paths_from_argv
+from .github import MAX_WORKERS, SYMLINK_MODE, GatewayTimeout, graphql, log, quote
 from .store import RawStore
 
-ROOT_KINDS = {"agents.md": AGENTS, "claude.md": CLAUDE}
+ROOT_KINDS = {name: kind for name, kind in KIND_BY_NAME.items() if kind != SKILL}
 LISTED_SKILL_FOLDERS = {"dotclaude": ".claude/skills", "dotagents": ".agents/skills"}
 MAX_SKILLS_PER_REPO = 50
 REPOS_PER_QUERY = 8
@@ -122,7 +121,8 @@ def fetch_with_split(batch: list[tuple[dict, list[Target]]], with_history: bool 
 
 
 def main() -> None:
-    store = RawStore(Path(sys.argv[1]))
+    (raw,) = paths_from_argv("RAW_DIR")
+    store = RawStore(raw)
     repos = list(store.repos().values())
     listings: dict[str, dict[str, list[str]]] = store.load_json("skill_dirs.json", {})
     pending = [r for r in repos if needs_skill_listing(r) and r["repo"] not in listings]
@@ -136,7 +136,7 @@ def main() -> None:
     work = [(r, t) for r in repos if (t := targets_for(r, skills[r["repo"]])) and f"{r['repo']}|{r['stratum']}" not in done]
     batches = [work[k:k + REPOS_PER_QUERY] for k in range(0, len(work), REPOS_PER_QUERY)]
     log(f"{len(work)} repos to fetch in {len(batches)} batches")
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         futures = {pool.submit(fetch_with_split, b): b for b in batches}
         for n, fut in enumerate(as_completed(futures), 1):
             try:

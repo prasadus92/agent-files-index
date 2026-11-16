@@ -102,7 +102,7 @@ def _hands_off(f: Features) -> bool:
     return bool(f.imports) or (f.nonblank_lines <= 5 and bool(f.relative_links or "agents.md" in " ".join(f.referenced_paths).lower()))
 
 
-@rule(("AF101", ERROR, "secret-like string", "GitHub blog, agents.md lessons from 2,500 repos: never commit secrets"))
+@rule(("AF101", ERROR, "secret-like string", "GitHub blog, lessons from 2,500 repos with agents.md: never commit secrets"))
 def secret_strings(ctx: Context):
     for name, n in sorted(ctx.features.secret_hits.items()):
         yield "AF101", f"{n} {name.replace('_', ' ')} match(es); remove and rotate if real"
@@ -201,7 +201,7 @@ def skill_frontmatter(ctx: Context):
     if not name:
         yield "AF502", "name is missing"
     elif len(name) > SKILL_NAME_MAX or not SKILL_NAME_RE.match(name):
-        yield "AF502", f"name '{name[:70]}' must be 1 to 64 lowercase letters, digits or single hyphens"
+        yield "AF502", f"name '{name[:70]}' must be 1 to {SKILL_NAME_MAX} lowercase letters, digits or single hyphens"
     elif folder and folder != name:
         yield "AF502", f"name '{name}' does not match folder '{folder}'"
     if name and RESERVED_SKILL_WORDS_RE.search(name):
@@ -209,7 +209,7 @@ def skill_frontmatter(ctx: Context):
     if not desc:
         yield "AF503", "description is missing"
     elif len(desc) > SKILL_DESCRIPTION_MAX:
-        yield "AF503", f"description is {len(desc):,} characters; the limit is 1,024"
+        yield "AF503", f"description is {len(desc):,} characters; the limit is {SKILL_DESCRIPTION_MAX:,}"
     if FIRST_PERSON_RE.match(desc):
         yield "AF504", "start with what the skill does, for example 'Extracts tables from PDFs'"
 
@@ -223,4 +223,4 @@ def claude_and_agents(ctx: Context):
     if agents_md_link(ctx.text) == "none":
         yield "AF601", "AGENTS.md sits next to this file and is never mentioned; add @AGENTS.md or symlink CLAUDE.md to it"
     if similarity(ctx.text, agents_text) >= DUPLICATE_THRESHOLD:
-        yield "AF602", "content is at least 90% the same as AGENTS.md"
+        yield "AF602", f"content is at least {DUPLICATE_THRESHOLD:.0%} the same as AGENTS.md"

@@ -7,12 +7,12 @@ Usage: python -m pipeline.analyze DATA_DIR RAW_DIR
 from __future__ import annotations
 
 import json
-import sys
-from pathlib import Path
 
 import pandas as pd
 
-from . import frame
+from agentfiles.rules import AGENTS_MAX_BYTES, CLAUDE_MAX_LINES, SKILL_MAX_BODY_LINES
+
+from . import frame, paths_from_argv
 from .store import RawStore
 
 STAR_BUCKETS = [(1000, 1999), (2000, 4999), (5000, 9999), (10000, 49999), (50000, None)]
@@ -82,8 +82,8 @@ def describe(df: pd.DataFrame) -> dict:
         out["files_with_checked_paths"] = len(checked)
         out["files_with_missing_path"] = pct((checked.n_paths_missing > 0).mean())
     out["any_lint_warning_or_error"] = pct(((df.lint_errors + df.lint_warnings) > 0).mean())
-    out["over_200_lines"] = pct((df.lines > 200).mean())
-    out["over_32kib"] = pct((df.bytes > 32 * 1024).mean())
+    out["over_200_lines"] = pct((df.lines > CLAUDE_MAX_LINES).mean())
+    out["over_32kib"] = pct((df.bytes > AGENTS_MAX_BYTES).mean())
     return out
 
 
@@ -106,7 +106,7 @@ def skills(files: pd.DataFrame, findings: pd.DataFrame) -> dict:
         "files": len(s), "repos": int(s.repo.nunique()), "repos_A": int(s[s.stratum == "A"].repo.nunique()),
         "has_frontmatter": pct(s.skill_has_frontmatter.mean()), "has_allowed_tools": pct(s.skill_has_allowed_tools.mean()),
         "description_len_median": float(s.skill_description_len.median()),
-        "body_over_500_lines": pct((s.skill_body_lines > 500).mean()),
+        "body_over_500_lines": pct((s.skill_body_lines > SKILL_MAX_BODY_LINES).mean()),
         "files_with_rule": {rule: pct(n / len(s)) for rule, n in hits.items()},
     }
 
@@ -127,7 +127,8 @@ def top_headings(headings: pd.DataFrame, n_files: int) -> dict:
 
 
 def main() -> None:
-    data, store = Path(sys.argv[1]), RawStore(Path(sys.argv[2]))
+    data, raw = paths_from_argv("DATA_DIR", "RAW_DIR")
+    store = RawStore(raw)
     read = lambda name: pd.read_parquet(data / f"{name}.parquet")  # noqa: E731
     repos, files, findings = with_flags(read("repos")), read("files"), read("lint_findings")
     secret_summary, risky = read("secret_like_summary"), read("risky_text_summary")

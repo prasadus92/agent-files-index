@@ -13,13 +13,14 @@ import html
 import io
 import json
 import math
-import sys
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
 
 from fontTools import subset
 from fontTools.ttLib import TTFont
+
+from . import paths_from_argv
 
 FONT_DIR = Path(__file__).parent / "fonts"
 FONT_FILES = {400: FONT_DIR / "InstrumentSans-Regular.ttf", 600: FONT_DIR / "InstrumentSans-SemiBold.ttf"}
@@ -46,8 +47,8 @@ TEXT = {
     "source": (400, 12, 17),
 }
 
-# Site palette: black, white, 1 red accent, greys. Red vs grey checked with the dataviz
-# validator: CVD dE 16.3 light / 8.5 dark; light grey is under 3:1, so every bar carries its value.
+# Site palette: black, white, 1 red accent, grays. Red vs gray under simulated color blindness: OKLab
+# dE 16.3 light, 8.5 dark. Light gray is under 3:1 contrast, so every bar carries its value.
 THEMES = {
     "light": {"surface": "#FFFFFF", "title": "#0C0C0C", "subtitle": "#5C5C5C", "legend": "#3A3A3A",
               "label": "#1A1A1A", "value": "#0C0C0C", "value-muted": "#5C5C5C", "source": "#6B6B6B",
@@ -345,7 +346,7 @@ def charts(s: dict) -> list[Chart]:
     rare = [(name, ad["A"][k]) for k, name in RARE_FILES.items() if ad["A"][k] < 5]
     return [
         Chart("adoption-by-stars", f"The more stars, the likelier a repo has an AGENTS.md or CLAUDE.md: {percent(top_band)} at {stars_label(top_key).removesuffix(' stars')}",
-              f"Repos with a root AGENTS.md or CLAUDE.md, by stars. {census}",
+              f"Repos with an AGENTS.md or CLAUDE.md at the root or in .claude/, by stars. {census}",
               [Row(stars_label(k), (v["has_either"],), f"of {v['n']:,}", highlight=k.endswith("max")) for k, v in stars], source),
         Chart("adoption-by-file", f"AGENTS.md leads; {series_names([n for n, _ in rare])} files each reach under {math.ceil(max(v for _, v in rare))}% of repos",
               f"Repos shipping each file. {a:,} repos with 1,000+ stars and a sample of {b:,} with 100 to 999.",
@@ -367,7 +368,7 @@ def charts(s: dict) -> list[Chart]:
 
 
 def main() -> None:
-    data, out = Path(sys.argv[1]), Path(sys.argv[2])
+    data, out = paths_from_argv("DATA_DIR", "OUT_DIR")
     out.mkdir(parents=True, exist_ok=True)
     built = charts(json.loads((data / "summary.json").read_text()))
     label_w = label_column(built)

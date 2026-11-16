@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Iterator
 from functools import cached_property
 from pathlib import Path
 
@@ -11,12 +12,14 @@ from .rules import CLAUDE, kind_for
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "vendor", "dist", "build", "target", "__pycache__", ".next", ".tox"}
 
 
-def discover(root: Path) -> list[Path]:
-    found = []
+def walk(root: Path) -> Iterator[tuple[str, list[str], list[str]]]:
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
-        found += [Path(dirpath) / name for name in filenames if kind_for(name)]
-    return sorted(found)
+        yield dirpath, dirnames, filenames
+
+
+def discover(root: Path) -> list[Path]:
+    return sorted(Path(dirpath) / name for dirpath, _, filenames in walk(root) for name in filenames if kind_for(name))
 
 
 def repo_root(start: Path, fallback: Path) -> Path:
@@ -32,8 +35,7 @@ class LocalRepo:
     def tree(self) -> list[str]:
         """Every file and folder path, so a path written relative to a package folder still resolves."""
         out = []
-        for dirpath, dirnames, filenames in os.walk(self.root):
-            dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        for dirpath, dirnames, filenames in walk(self.root):
             rel = Path(dirpath).relative_to(self.root).as_posix()
             prefix = "" if rel == "." else rel + "/"
             out += ["/" + prefix + name for name in dirnames + filenames]

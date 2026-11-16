@@ -4,7 +4,7 @@ language:
   - en
 pretty_name: Agent Files Index
 size_categories:
-  - 10K<n<100K
+  - 100K<n<1M
 tags:
   - agents-md
   - claude-md
@@ -36,7 +36,7 @@ A CLAUDE.md file or AGENTS.md file is a Markdown file in a repo that a coding ag
 | --- | --- |
 | Repos in the frame | 38,272 with 1,000+ stars (census); 7,912 with 100 to 999 stars (sample) |
 | Agent files | 7,502 `AGENTS.md`, 5,252 `CLAUDE.md`, 29,352 `SKILL.md` |
-| Headings | 474,526 (text published for those shared by 5 or more repos) |
+| Headings | 474,609 (text published for short headings shared by 5 or more repos) |
 | Repos with an `AGENTS.md` or `CLAUDE.md` | 21.3% of the census, 15.2% of the sample |
 | Snapshot | 2026-11-15 |
 
@@ -57,7 +57,7 @@ Full method, including the reason for repository search over code search: [`../d
 | --- | --- | --- |
 | `repos` | 1 per repo in the frame | Stars, language, license, dates, head commit, and a flag per agent file location |
 | `files` | 1 per agent file | Size, structure, commands, rule words, references, maintenance and lint counts |
-| `headings` | 1 per heading | Level and section categories, and the normalized text when 5 or more repos share it and it holds no email address, URL, domain name or home path |
+| `headings` | 1 per heading | Level and section categories, and the normalized text when it has 8 words or fewer, 5 or more repos share it, and it holds no email address, URL, domain name or home path |
 | `commands` | 1 per command | The tool (`pnpm`, `pytest`, or `./*` for a local script) and its kind; full command lines stay private |
 | `lint_findings` | 1 per rule hit | Rule id and severity per file; the secret, home-path and injection rules are excluded |
 | `secret_like_summary` | 1 per pattern, stratum and kind | Files matching the raw pattern and files left after filtering; no repo names |
@@ -77,12 +77,12 @@ Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. E
 | `bytes`, `lines`, `nonblank_lines`, `words`, `est_tokens` | Size; `est_tokens` is characters divided by 4 |
 | `n_headings`, `n_h1`, `n_h2`, `max_heading_depth` | Heading structure |
 | `sec_<category>` | True if any heading falls in that category (17 keyword categories, see `agentfiles/sections.py`) |
-| `n_commands`, `n_<kind>_cmds` | Commands found in shell code blocks and inline code, by kind: test, lint, format, typecheck, build, install, run; `git` and `gh` commands count as `vcs` |
+| `n_commands`, `n_<kind>_cmds` | Commands found in shell code blocks and inline code, by kind: test, lint, format, typecheck, build, install, run; `git` and `gh` commands count toward `n_commands` only |
 | `package_managers` | JS package managers used for project installs (`npm;pnpm`); global installs do not count |
 | `n_must`, `n_never`, `n_emphasis_caps` | Must-style words, never-style words, all-caps emphasis words |
 | `mentions_tests`, `mentions_ci`, `mentions_security` | The text mentions these anywhere |
 | `n_urls`, `n_relative_links`, `n_imports`, `n_referenced_paths` | References out of the file |
-| `n_paths_checked`, `n_paths_missing` | Referenced paths that could be checked, and those found nowhere in the repo tree at `commit_sha` |
+| `n_paths_checked`, `n_paths_missing` | Referenced paths that could be checked, and those found nowhere in the repo tree at `commit_sha`; `n_paths_missing` stops at 20 |
 | `n_commits`, `last_commit_at` | Commits that touched the file, and the date of the last one |
 | `skill_*` | Skill frontmatter: present, `name` and `description` lengths, `allowed-tools` present, body length |
 | `similarity_to_agents_md` | For a `CLAUDE.md` next to an `AGENTS.md`: Jaccard similarity of their non-blank lines |
@@ -107,10 +107,24 @@ Each table comes as gzipped CSV (`.csv.gz`) and Parquet with the same columns. E
 - A path found nowhere in the tree may still be fine: a build output, a submodule, or a file the agent is meant to create. Placeholders and common build folders are excluded before counting, and a hand check found about 1 in 3 flagged paths stale.
 - Secret-like matches are an upper bound. Placeholders, local dev credentials and low-entropy values are filtered; what is left can still be a revoked key or a test fixture.
 
-## License and citation
+## License and sources
 
-Copyright Prasad Subrahmanya (https://prasad.tech). Licensed CC BY 4.0. Cite with [`../CITATION.cff`](../CITATION.cff), or as: Prasad Subrahmanya, *Agent Files Index* (snapshot 2026-11-15), https://github.com/prasadus92/agent-files-index.
+Copyright Prasad Subrahmanya (https://prasad.tech). The tables, the derived features and `summary.json` are licensed CC BY 4.0 ([`LICENSE`](LICENSE)).
+
+- **The source files are not covered.** They belong to their repos and keep their own licenses. The dataset holds no copy of their text: only counts and flags computed from it, command tool names, and headings of 8 words or fewer that 5 or more repos share.
+- **Repo metadata** (stars, forks, language, license, dates, head commit) comes from the GitHub REST and GraphQL APIs.
+- **`license`** is GitHub's SPDX detection for the repo at crawl time. `NOASSERTION` means GitHub found a license file it could not identify; a missing value means it found none. Repos without a license are included, because nothing from their files is redistributed. Check the repo itself before reusing any of its files.
+- **Provenance.** Every file row carries `repo`, `path`, `commit_sha` and `blob_sha`, so the original is at `https://github.com/<repo>/blob/<commit_sha>/<path>`.
+- **Collection.** The crawl used the GitHub API for research, and the results are published open access, in line with GitHub's [Acceptable Use Policies](https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies). It holds no names, email addresses or other personal details beyond the `owner/name` in each repo's public URL.
+
+## Removal
+
+To take a repo out of the dataset, open an issue with its `owner/name`, or use the contact form at [prasad.tech/contact](https://prasad.tech/contact/) if you'd rather not ask in public. The repo goes into [`pipeline/opt_out.txt`](../pipeline/opt_out.txt), its rows leave `data/` in the next commit, and later snapshots skip it. Corrections work the same way.
+
+## Citation
+
+Cite with [`../CITATION.cff`](../CITATION.cff), or as: Prasad Subrahmanya, *Agent Files Index* (snapshot 2026-11-15), https://github.com/prasadus92/agent-files-index.
 
 ## Maintenance
 
-The plan is a quarterly snapshot, with the same scripts and the snapshot date in every row. Corrections and requests to remove a repo: open an issue on the GitHub repo.
+The plan is a quarterly snapshot, with the same scripts and the snapshot date in every row.

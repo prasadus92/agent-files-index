@@ -24,7 +24,7 @@ The first 3 need only Python 3.11+. `uv sync --group data` installs pandas, pyar
 
 - A new or changed lint rule needs a source in its `@rule(...)` entry, a test where it fires, a test where it does not, and a passing `python -m tests.ablate`.
 - `agentfiles/` must not import anything outside the standard library.
-- Never write file text, secret values, or headings that fewer than 5 repos share into `data/`. The raw crawl folder stays outside the repo.
+- Never write file text, secret values, or heading text that fewer than 5 repos share or that runs over 8 words into `data/`. Repos listed in `pipeline/opt_out.txt` stay out of every table. The raw crawl folder stays outside the repo.
 - Data is CC BY 4.0 and code is MIT. Do not add data under another license.
 - Comments say what the code cannot: a source, a non-obvious rule, or the reason for a choice.
 - Writing in docs and the data card: plain sentences, digits for numbers, sentence-case headings, American spelling, no em dashes.

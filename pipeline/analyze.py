@@ -77,6 +77,11 @@ def describe(df: pd.DataFrame) -> dict:
     if df.n_commits.notna().any():
         out["single_commit"] = pct((df.n_commits == 1).mean())
         out["commits_median"] = float(df.n_commits.median())
+    if df.has_init_line.notna().any():
+        init = df.has_init_line.fillna(False).astype(bool)
+        out["init_line"] = pct(init.mean())
+        out["single_commit_with_init_line"] = pct((df[init].n_commits == 1).mean())
+        out["single_commit_without_init_line"] = pct((df[~init].n_commits == 1).mean())
     checked = df[df.n_paths_checked.fillna(0) > 0]
     if not checked.empty:
         out["files_with_checked_paths"] = len(checked)

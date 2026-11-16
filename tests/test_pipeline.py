@@ -100,6 +100,16 @@ class OptOutExportTests(unittest.TestCase):
             self.assertEqual(set(tables[name].repo), {"keep/me"}, name)
         self.assertEqual(tables["risky_text_summary"].files.tolist(), [1])
 
+    def test_init_line_is_flagged_on_claude_md_only(self):
+        init = "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n"
+        with tempfile.TemporaryDirectory() as d:
+            store = RawStore(Path(d))
+            store.append("repos_A.jsonl", [raw_repo("o/r", 1)])
+            store.append("files.jsonl", [raw_file("o/r"), {**raw_file("o/r"), "path": "CLAUDE.md", "kind": "claude_md", "text": init}])
+            files = build(store, set())["files"].set_index("path")
+        self.assertIs(files.loc["CLAUDE.md", "has_init_line"], True)
+        self.assertIsNone(files.loc["AGENTS.md", "has_init_line"])
+
 
 class ArgvTests(unittest.TestCase):
     def test_paths_are_returned_in_order(self):

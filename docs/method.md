@@ -53,6 +53,7 @@ The extractor is plain Python with no model in the loop. It reads Markdown struc
 - **Rule words.** Counts of must-style words (must, always, required), never-style words (never, do not, avoid), and all-caps emphasis (IMPORTANT, NEVER).
 - **References.** URLs, relative Markdown links, `@path` imports with a document extension, and inline code that looks like a repo path.
 - **Mentions.** Whether the file mentions tests, CI or security anywhere.
+- **`/init` line.** Whether a `CLAUDE.md` contains "This file provides guidance to Claude Code", the sentence Claude Code's `/init` command opens the file with. A match means the file started from `/init` output or copied from one; it does not say how much was edited since.
 - **Skills.** Frontmatter present, `name` and `description` lengths, `allowed-tools` present, body length.
 - **Maintenance.** Commits touching the file and the last commit date.
 
@@ -79,7 +80,7 @@ Matched values never enter a derived file. The published tables hold counts by p
 ## Known biases
 
 - Stars measure attention. The frame over-represents AI tooling repos, which gained stars quickly in 2025 and 2026.
-- Search results drift by a few repos between calls, and star counts moved during a crawl that took about an hour.
+- Search results drift by a few repos between calls, and star counts moved during the 32 minutes it took to list the census.
 - Repos that time out on the GraphQL API can be missing; 2 of the 38,274 reported in stratum A were.
 - Heading categories and command kinds come from keyword rules. They miss sections with unusual titles and commands from tools not on the list.
 - A path that cannot be found is not always stale. It can be generated at build time, live in a submodule, or name a file the agent is told to create.

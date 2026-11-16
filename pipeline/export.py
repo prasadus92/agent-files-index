@@ -24,6 +24,7 @@ from .store import PathEvidence, RawStore
 AGGREGATE_ONLY_RULES = {"AF101", "AF102", "AF103"}
 MIN_REPOS_PER_HEADING = 5
 MAX_HEADING_WORDS = 8
+INIT_LINE_RE = re.compile(r"this file provides guidance to claude code", re.I)  # the sentence /init opens CLAUDE.md with
 UNSAFE_HEADING_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|https?://|www\.|\b[\w-]+\.(?:com|io|dev|org|net|ai|app|co|so|sh|me|tech)\b", re.I)
 COMMAND_KINDS = (*(kind for kind, _ in commands.KIND_PATTERNS), "run")
 
@@ -124,6 +125,7 @@ class Tables:
             **skill_fields(kind, f),
             "similarity_to_agents_md": round(similarity(text, agents_text), 3) if siblings and not row["is_symlink"] else None,
             "agents_md_link": self._agents_md_link(row, text, siblings),
+            "has_init_line": bool(INIT_LINE_RE.search(text)) if kind == CLAUDE and not row["is_symlink"] else None,
             "lint_errors": sum(1 for x in public if x.severity == "error"),
             "lint_warnings": sum(1 for x in public if x.severity == "warning"),
             "lint_info": sum(1 for x in public if x.severity == "info"),

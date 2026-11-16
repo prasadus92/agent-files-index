@@ -11,6 +11,7 @@ from pipeline import github, opt_out, paths_from_argv
 try:
     import pandas as pd
 
+    from pipeline.analyze import init_line_stats
     from pipeline.export import build, publishable_headings
     from pipeline.store import RawStore
 except ImportError:
@@ -105,10 +106,31 @@ class OptOutExportTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             store = RawStore(Path(d))
             store.append("repos_A.jsonl", [raw_repo("o/r", 1)])
-            store.append("files.jsonl", [raw_file("o/r"), {**raw_file("o/r"), "path": "CLAUDE.md", "kind": "claude_md", "text": init}])
+            claude = {**raw_file("o/r"), "kind": "claude_md"}
+            store.append("files.jsonl", [raw_file("o/r"), {**claude, "path": "CLAUDE.md", "text": init},
+                                         {**claude, "path": ".claude/CLAUDE.md", "text": "# Notes\n"},
+                                         {**claude, "path": "docs/CLAUDE.md", "text": "AGENTS.md", "is_symlink": True}])
             files = build(store, set())["files"].set_index("path")
         self.assertIs(files.loc["CLAUDE.md", "has_init_line"], True)
+        self.assertIs(files.loc[".claude/CLAUDE.md", "has_init_line"], False)
+        self.assertIsNone(files.loc["docs/CLAUDE.md", "has_init_line"])
         self.assertIsNone(files.loc["AGENTS.md", "has_init_line"])
+
+
+@unittest.skipUnless(pd, "analysis tests need pandas")
+class InitLineStatsTests(unittest.TestCase):
+    def test_shares_split_by_init_line_and_single_commit(self):
+        df = pd.DataFrame({"has_init_line": [True, True, False, False, None], "n_commits": [1, 3, 1, 1, 2]})
+        self.assertEqual(init_line_stats(df), {"init_line": 50.0, "single_commit_with_init_line": 50.0,
+                                               "single_commit_without_init_line": 100.0,
+                                               "init_line_among_single_commit": 33.3})
+
+    def test_empty_group_gives_none_not_nan(self):
+        df = pd.DataFrame({"has_init_line": [True, True], "n_commits": [1, 2]})
+        self.assertIsNone(init_line_stats(df)["single_commit_without_init_line"])
+
+    def test_no_claude_md_rows_give_no_stats(self):
+        self.assertEqual(init_line_stats(pd.DataFrame({"has_init_line": [None], "n_commits": [1]})), {})
 
 
 class ArgvTests(unittest.TestCase):

@@ -13,6 +13,8 @@ The frame has 2 strata of public GitHub repos. Both use the same search filters:
 
 Search reported 38,274 repos for stratum A and the crawl enumerated 38,272. Stratum B has 7,912 repos.
 
+Repos whose owners ask to leave the dataset are dropped from both strata by `pipeline.export`, using the hashed ids in `pipeline/opt_out.txt`. No repo had opted out at this snapshot.
+
 Every repo in stratum B has the same chance of selection, so the sample is self-weighting. To estimate the whole 100 to 999 star population, weight each B repo by 6,893 / 345 = 19.98. The `all_100plus` figures in `summary.json` use that weight. Everything else reports A and B separately, and the headline file statistics are for the census.
 
 ## Repository search and code search

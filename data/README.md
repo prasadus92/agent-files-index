@@ -113,13 +113,13 @@ Copyright Prasad Subrahmanya (https://prasad.tech). The tables, the derived feat
 
 - **The source files are not covered.** They belong to their repos and keep their own licenses. The dataset holds no copy of their text: only counts and flags computed from it, command tool names, and headings of 8 words or fewer that 5 or more repos share.
 - **Repo metadata** (stars, forks, language, license, dates, head commit) comes from the GitHub REST and GraphQL APIs.
-- **`license`** is GitHub's SPDX detection for the repo at crawl time. `NOASSERTION` means GitHub found a license file it could not identify; a missing value means it found none. Repos without a license are included, because nothing from their files is redistributed. Check the repo itself before reusing any of its files.
+- **`license`** is GitHub's SPDX detection for the repo at crawl time. `NOASSERTION` means GitHub found a license file it could not identify; a missing value means it found none. Repos without a license are included, because only counts, flags, tool names and short shared headings are taken from their files. Check the repo itself before reusing any of its files.
 - **Provenance.** Every file row carries `repo`, `path`, `commit_sha` and `blob_sha`, so the original is at `https://github.com/<repo>/blob/<commit_sha>/<path>`.
-- **Collection.** The crawl used the GitHub API for research, and the results are published open access, in line with GitHub's [Acceptable Use Policies](https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies). It holds no names, email addresses or other personal details beyond the `owner/name` in each repo's public URL.
+- **Collection.** The crawl used the GitHub API. GitHub's [Acceptable Use Policies](https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies) allow research use of public information when the publications are open access, as this dataset is. The only personal detail in the tables is the account name inside each repo's `owner/name`; there are no names, email addresses or file authors. Owners can ask for [removal](#removal).
 
 ## Removal
 
-To take a repo out of the dataset, open an issue with its `owner/name`, or use the contact form at [prasad.tech/contact](https://prasad.tech/contact/) if you'd rather not ask in public. The repo goes into [`pipeline/opt_out.txt`](../pipeline/opt_out.txt), its rows leave `data/` in the next commit, and later snapshots skip it. Corrections work the same way.
+To take a repo out of the dataset, open an issue with its `owner/name`, or use the contact form at [prasad.tech/contact](https://prasad.tech/contact/) if you'd rather not ask in public. A hash of the repo's numeric GitHub id goes into [`pipeline/opt_out.txt`](../pipeline/opt_out.txt), so the list names nobody and still matches after a rename or transfer. The repo's rows leave `data/` in the next commit and later snapshots skip it. Earlier commits and copies already downloaded keep the old rows. Corrections work the same way.
 
 ## Citation
 

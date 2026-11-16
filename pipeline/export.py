@@ -17,14 +17,13 @@ from agentfiles.relations import agents_md_link, similarity
 from agentfiles.rules import CLAUDE, SKILL, lint
 from agentfiles.sections import SECTION_CATEGORIES, classify_heading
 
-from . import frame, paths_from_argv
+from . import frame, opt_out, paths_from_argv
 from .github import SYMLINK_MODE
 from .store import PathEvidence, RawStore
 
 AGGREGATE_ONLY_RULES = {"AF101", "AF102", "AF103"}
 MIN_REPOS_PER_HEADING = 5
 MAX_HEADING_WORDS = 8
-OPT_OUT_FILE = Path(__file__).with_name("opt_out.txt")
 UNSAFE_HEADING_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+|https?://|www\.|\b[\w-]+\.(?:com|io|dev|org|net|ai|app|co|so|sh|me|tech)\b", re.I)
 COMMAND_KINDS = (*(kind for kind, _ in commands.KIND_PATTERNS), "run")
 
@@ -161,18 +160,6 @@ def _public_head(head: str) -> str:
     return "./*" if head.startswith("./") and head not in commands.COMMAND_HEADS else head
 
 
-def opted_out(path: Path = OPT_OUT_FILE) -> set[str]:
-    """Repos whose owners asked to leave the dataset, 1 owner/name per line."""
-    if not path.exists():
-        return set()
-    lines = (line.split("#", 1)[0].strip().lower() for line in path.read_text().splitlines())
-    return {line for line in lines if line}
-
-
-def without_opted_out(repos: dict[str, dict], excluded: set[str]) -> dict[str, dict]:
-    return {name: r for name, r in repos.items() if name.lower() not in excluded}
-
-
 def publishable_headings(headings: pd.DataFrame) -> pd.DataFrame:
     """Keep heading text only when it is a short phrase shared by 5+ repos with no address, URL or home path."""
     repos_per_heading = headings.groupby("heading").repo.nunique()
@@ -201,11 +188,8 @@ def write(out: Path, name: str, df: pd.DataFrame) -> None:
     print(f"{name}: {len(df):,} rows")
 
 
-def main() -> None:
-    raw, out = paths_from_argv("RAW_DIR", "OUT_DIR")
-    store = RawStore(raw)
-    out.mkdir(parents=True, exist_ok=True)
-    repos = without_opted_out(store.repos(), opted_out())
+def build(store: RawStore, excluded: set[str]) -> dict[str, pd.DataFrame]:
+    repos = opt_out.keep(store.repos(), excluded)
     evidence = PathEvidence(store)
     files = [row for row in store.files() if row["repo"] in repos]
     texts = {(r["repo"], r["path"].lower()): r["text"] or "" for r in files}
@@ -217,7 +201,7 @@ def main() -> None:
     skill_dirs = store.load_json("skill_dirs_total.json", {})
     repo_rows = [{**repo_row(r), "n_skill_files": skill_files.get(r["repo"], 0), "n_skill_dirs": skill_dirs.get(r["repo"], 0)}
                  for r in repos.values()]
-    published = {
+    return {
         "repos": pd.DataFrame(repo_rows),
         "files": pd.DataFrame(tables.files),
         "headings": publishable_headings(pd.DataFrame(tables.headings)),
@@ -225,7 +209,12 @@ def main() -> None:
         "lint_findings": pd.DataFrame(tables.findings),
         **private_summaries(tables),
     }
-    for name, df in published.items():
+
+
+def main() -> None:
+    raw, out = paths_from_argv("RAW_DIR", "OUT_DIR")
+    out.mkdir(parents=True, exist_ok=True)
+    for name, df in build(RawStore(raw), opt_out.load()).items():
         write(out, name, df)
 
 

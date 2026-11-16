@@ -1,1 +1,1 @@
-# Repos left out of every snapshot at their owners' request, 1 owner/name per line.
+# SHA-256 of the numeric GitHub id of each repo left out at its owner's request. Add one with pipeline.opt_out.

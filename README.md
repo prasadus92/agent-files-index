@@ -77,7 +77,7 @@ Options: `--format json`, `--min-severity warning`, and `--strict` to exit 1 on 
     min-severity: warning
 ```
 
-The action runs the runner's `python3`, which must be 3.11 or later. GitHub's Ubuntu runners have it; on other runners, add `actions/setup-python` first.
+The action runs the runner's `python3`, which must be 3.11 or later. `ubuntu-latest` (24.04) has it; on other runners, add `actions/setup-python` first.
 
 ### As a pre-commit hook
 

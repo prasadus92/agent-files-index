@@ -79,7 +79,7 @@ class Features:
 
 
 def extract(text: str) -> Features:
-    text = text.removeprefix("﻿")
+    text = text.removeprefix("\ufeff")
     lines = text.splitlines()
     front = parse_frontmatter(text)
     f = Features(

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import time
@@ -14,6 +15,7 @@ USER_AGENT = "agent-files-index"
 GRAPHQL_FLOOR = 200
 REST_FLOOR = 1500  # leaves REST budget for other work sharing the same token
 SYMLINK_MODE = 40960
+MAX_WORKERS = 3
 
 
 class GatewayTimeout(RuntimeError):
@@ -26,7 +28,7 @@ def log(msg: str) -> None:
 
 @cache
 def token() -> str:
-    return subprocess.check_output(["gh", "auth", "token"], text=True).strip()
+    return os.environ.get("GITHUB_TOKEN") or subprocess.check_output(["gh", "auth", "token"], text=True).strip()
 
 
 def quote(value: str) -> str:

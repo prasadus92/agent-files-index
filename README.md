@@ -14,7 +14,7 @@ Method: [`docs/method.md`](docs/method.md). Write-up with charts: [prasad.tech/b
 The census covers 38,272 public repos with 1,000 or more stars and a push in the last 12 months. Shares below are for the census unless they say otherwise.
 
 - **Adoption.** 21.3% have an `AGENTS.md` or `CLAUDE.md` (at the root or in `.claude/`): 17.3% have `AGENTS.md`, 12.0% `CLAUDE.md`, 8.0% both. In a 5% sample of repos with 100 to 999 stars it is 15.2%.
-- **Stars and age.** The share rises from 17.8% at 1,000 to 1,999 stars to 47.5% at 50,000 or more. 38.9% of repos created in 2026 have one, against 15% to 17% for repos created in 2013 to 2020.
+- **Stars and age.** The share rises from 17.8% at 1,000 to 1,999 stars to 47.5% at 50,000 or more. 38.9% of repos created in 2026 have one, against 15.4% to 17.3% for repos created in 2013 to 2020.
 - **Length.** The median `AGENTS.md` is 96 lines and the median `CLAUDE.md` is 55. 16.5% of `CLAUDE.md` files are over the 200 lines Claude Code's docs suggest, and 4.0% of `AGENTS.md` files are over the 32 KiB Codex reads.
 - **Commands.** 57.4% of `AGENTS.md` files and 40.1% of `CLAUDE.md` files give the agent a test command.
 - **Both files.** In the 2,968 repos with a root `AGENTS.md` and `CLAUDE.md`, `CLAUDE.md` imports `AGENTS.md` in 38.3%, is a symlink to it in 24.6%, mentions it in 16.1%, and never refers to it in 20.1%. Claude Code reads `AGENTS.md` only when there is no `CLAUDE.md`, so in that last group Claude never sees it.
@@ -77,6 +77,8 @@ Options: `--format json`, `--min-severity warning`, and `--strict` to exit 1 on 
     min-severity: warning
 ```
 
+The action runs the runner's `python3`, which must be 3.11 or later. `ubuntu-latest` (24.04) has it; on other runners, add `actions/setup-python` first.
+
 ### As a pre-commit hook
 
 ```yaml
@@ -90,7 +92,7 @@ Options: `--format json`, `--min-severity warning`, and `--strict` to exit 1 on 
 
 | Rule | Severity | Checks | Source |
 | --- | --- | --- | --- |
-| AF101 | error | Secret-like strings (cloud and API keys, private keys, remote connection strings with passwords) | GitHub's analysis of 2,500 agents.md files |
+| AF101 | error | Secret-like strings (cloud and API keys, private keys, remote connection strings with passwords) | GitHub's lessons from 2,500 repos with agents.md |
 | AF102 | warning | Absolute home-directory paths such as `/Users/<name>/` | Index data |
 | AF103 | warning | Unquoted text telling the agent to ignore its instructions or keep something from the user | Index data |
 | AF104 | info | `curl` or `wget` piped into a shell | Index data |
@@ -122,8 +124,8 @@ Each rule has a test where it fires and a test where it does not, and `python -m
 | Table | One row per |
 | --- | --- |
 | `repos` | Repo in the frame, with a flag for each agent file location |
-| `files` | Agent file, with about 80 structural features and lint counts |
-| `headings` | Heading, normalized, with its section categories; the text is kept only for headings shared by 5 or more repos |
+| `files` | Agent file, with about 65 structural features and lint counts |
+| `headings` | Heading, normalized, with its section categories; the text is kept only for headings of 8 words or fewer that 5 or more repos share |
 | `commands` | Command a file tells the agent to run: the tool name and its kind |
 | `lint_findings` | Rule a file triggers (the secret, home-path and injection rules are excluded) |
 | `secret_like_summary` | Pattern, stratum and file kind, counts only |
@@ -135,16 +137,16 @@ The tables hold derived features. File text is never published. Each file row ca
 
 ```bash
 uv sync --group data
-python -m pipeline.enumerate RAW_DIR
-python -m pipeline.fetch RAW_DIR
-python -m pipeline.check_paths RAW_DIR
-python -m pipeline.resolve_paths RAW_DIR
-python -m pipeline.export RAW_DIR data
-python -m pipeline.analyze data RAW_DIR
-python -m pipeline.charts data charts
+uv run python -m pipeline.enumerate RAW_DIR
+uv run python -m pipeline.fetch RAW_DIR
+uv run python -m pipeline.check_paths RAW_DIR
+uv run python -m pipeline.resolve_paths RAW_DIR
+uv run python -m pipeline.export RAW_DIR data
+uv run python -m pipeline.analyze data RAW_DIR
+uv run python -m pipeline.charts data charts
 ```
 
-`RAW_DIR` holds full file text, so keep it outside the repo and never publish it. A full run takes about 2.5 hours and fits within the hourly API limits of 1 GitHub token.
+`RAW_DIR` holds full file text, so keep it outside the repo and never publish it. A full run takes about 2.5 hours and fits within the hourly API limits of 1 GitHub token. The steps read the token from `GITHUB_TOKEN`, or from an authenticated `gh` CLI.
 
 ## Cite
 
@@ -164,4 +166,6 @@ See [`CITATION.cff`](CITATION.cff), or:
 
 Copyright Prasad Subrahmanya (https://prasad.tech).
 
-Code: MIT ([`LICENSE`](LICENSE)). Data in `data/`: CC BY 4.0 ([`data/LICENSE`](data/LICENSE)). The chart font in `pipeline/fonts` is Instrument Sans under the SIL Open Font License 1.1 ([`OFL.txt`](pipeline/fonts/OFL.txt)). The source files belong to their repos and keep their own licenses; this dataset does not redistribute them.
+Code: MIT ([`LICENSE`](LICENSE)). Data in `data/`: CC BY 4.0 ([`data/LICENSE`](data/LICENSE)). The chart font in `pipeline/fonts` is Instrument Sans under the SIL Open Font License 1.1 ([`OFL.txt`](pipeline/fonts/OFL.txt)). The source files belong to their repos and keep their own licenses; this dataset does not redistribute them. The data card covers [sources and licenses](data/README.md#license-and-sources).
+
+To take a repo out of the dataset, open an issue or use the contact form at [prasad.tech/contact](https://prasad.tech/contact/). See [Removal](data/README.md#removal).

@@ -5,11 +5,10 @@ Usage: python -m pipeline.resolve_paths RAW_DIR
 """
 from __future__ import annotations
 
-import sys
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 
-from .github import git_tree, log
+from . import paths_from_argv
+from .github import MAX_WORKERS, git_tree, log
 from .store import RawStore, path_key
 
 
@@ -32,7 +31,8 @@ def resolve(job: tuple[str, str, list[str]]) -> dict[str, str]:
 
 
 def main() -> None:
-    store = RawStore(Path(sys.argv[1]))
+    (raw,) = paths_from_argv("RAW_DIR")
+    store = RawStore(raw)
     checks: dict[str, bool] = store.load_json("path_checks.json", {})
     results: dict[str, str] = store.load_json("path_resolution.json", {})
     by_repo: dict[tuple[str, str], list[str]] = {}
@@ -42,7 +42,7 @@ def main() -> None:
             by_repo.setdefault((repo, sha), []).append(p)
     jobs = [(repo, sha, ps) for (repo, sha), ps in by_repo.items()]
     log(f"{len(jobs)} repos with unresolved paths")
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         for n, found in enumerate(pool.map(resolve, jobs), 1):
             results.update(found)
             if n % 50 == 0:

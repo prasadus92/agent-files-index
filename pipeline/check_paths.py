@@ -5,14 +5,13 @@ Usage: python -m pipeline.check_paths RAW_DIR
 """
 from __future__ import annotations
 
-import sys
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
 
 from agentfiles import paths
 from agentfiles.features import extract
 
-from .github import GatewayTimeout, graphql, log, quote
+from . import paths_from_argv
+from .github import MAX_WORKERS, GatewayTimeout, graphql, log, quote
 from .store import RawStore, path_key
 
 MAX_PER_FILE = 50
@@ -52,7 +51,8 @@ def check(items: list[tuple[str, str, str]]) -> dict[str, bool]:
 
 
 def main() -> None:
-    store = RawStore(Path(sys.argv[1]))
+    (raw,) = paths_from_argv("RAW_DIR")
+    store = RawStore(raw)
     results: dict[str, bool] = store.load_json("path_checks.json", {})
     items = sorted({(row["repo"], row["head_sha"], p)
                     for row in store.files()
@@ -61,7 +61,7 @@ def main() -> None:
                     if path_key(row["repo"], row["head_sha"], p) not in results})
     log(f"{len(items)} paths to check")
     batches = [items[k:k + PER_QUERY] for k in range(0, len(items), PER_QUERY)]
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
         for n, found in enumerate(pool.map(check, batches), 1):
             results.update(found)
             if n % 25 == 0:

@@ -1,4 +1,5 @@
 """Suppress each rule in turn and confirm at least 1 test fails without it. Run: python -m tests.ablate"""
+import io
 import sys
 import unittest
 
@@ -9,7 +10,7 @@ original = suite.lint
 uncovered = []
 for rid in RULES:
     suite.lint = lambda *a, _rid=rid, **k: [f for f in original(*a, **k) if f.id != _rid]
-    result = unittest.TextTestRunner(stream=open("/dev/null", "w"), verbosity=0).run(
+    result = unittest.TextTestRunner(stream=io.StringIO(), verbosity=0).run(
         unittest.defaultTestLoader.loadTestsFromModule(suite))
     failed = len(result.failures) + len(result.errors)
     print(f"{rid}: {failed} test(s) fail without it")
